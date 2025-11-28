@@ -661,12 +661,31 @@ body {
     font-weight: bold;
     line-height: 1;
 }
+
+
+
+
+		   /* ✅ ESTILOS DE SEGURANÇA */
+#auth-check {
+    display: flex;
+}
 		   
 		   
 </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
 
+
+
+<body class="bg-gray-50 min-h-screen">
+    <!-- ✅ TELA DE BLOQUEIO - aparece enquanto verifica autenticação -->
+    <div id="auth-check" class="fixed inset-0 bg-white z-50 flex items-center justify-center">
+        <div class="text-center">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <p class="text-gray-600">Verificando autenticação...</p>
+        </div>
+    </div>
+	
    
     <!-- SISTEMA PRINCIPAL (inicialmente oculto) -->
     <div id="main-system">
@@ -791,49 +810,53 @@ body {
         const BACKEND_URL = "https://api.gtgo.com.br";
         let currentUser = null;
 
-        // ✅ VERIFICAÇÃO SIMPLES DE AUTENTICAÇÃO
-        async function checkAuth() {
-            try {
-                const response = await fetch(`${BACKEND_URL}/api/check-auth`, {
-                    method: 'GET',
-                    credentials: 'include'
-                });
-                
-                if (response.status === 401) {
-                    window.location.href = 'index.html';
-                    return false;
-                }
-
-                const result = await response.json();
-                if (result.success) {
-                    currentUser = result.user;
-                    return true;
-                } else {
-                    window.location.href = 'index.html';
-                    return false;
-                }
-                
-            } catch (error) {
-                console.error('Erro ao verificar autenticação:', error);
-                window.location.href = 'index.html';
-                return false;
-            }
+async function checkAuth() {
+    // ✅ MOSTRA TELA DE CARREGAMENTO
+    document.getElementById('auth-check').style.display = 'flex';
+    
+    try {
+        const response = await fetch(`${BACKEND_URL}/api/check-auth`, {
+            method: 'GET',
+            credentials: 'include'
+        });
+        
+        if (response.status === 401) {
+            // ❌ NÃO AUTENTICADO - REDIRECIONA IMEDIATAMENTE
+            window.location.href = 'index.html';
+            return false;
         }
 
-        // ✅ INICIALIZAÇÃO DO SISTEMA
-        async function initializeApp() {
-            console.log("🚀 Iniciando aplicação...");
-            
-            const isAuthenticated = await checkAuth();
-            
-            if (!isAuthenticated) {
-                return; // Já redirecionou para index.html
-            }
-
-            // ✅ SE AUTENTICADO, INICIA O SISTEMA
-            console.log("✅ Usuário autenticado, inicializando sistema...");
-            initializeSystem();
+        const result = await response.json();
+        if (result.success) {
+            currentUser = result.user;
+            // ✅ AUTENTICADO - MOSTRA O SISTEMA
+            document.getElementById('auth-check').style.display = 'none';
+            document.getElementById('main-system').style.display = 'block';
+            return true;
+        } else {
+            window.location.href = 'index.html';
+            return false;
         }
+        
+    } catch (error) {
+        console.error('Erro ao verificar autenticação:', error);
+        window.location.href = 'index.html';
+        return false;
+    }
+}
+
+async function initializeApp() {
+    console.log("🚀 Iniciando aplicação...");
+    
+    const isAuthenticated = await checkAuth();
+    
+    if (!isAuthenticated) {
+        return; // Já redirecionou para index.html
+    }
+
+    console.log("✅ Usuário autenticado, inicializando sistema...");
+    initializeSystem();
+}
 
 
 
