@@ -781,6 +781,70 @@ body {
 <script src="notifications.js"></script>
 
     <script>
+
+ //sistema de login separado
+
+
+
+
+ // ✅ CONFIGURAÇÃO
+        const BACKEND_URL = "https://api.gtgo.com.br";
+        let currentUser = null;
+
+        // ✅ VERIFICAÇÃO SIMPLES DE AUTENTICAÇÃO
+        async function checkAuth() {
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/check-auth`, {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+                
+                if (response.status === 401) {
+                    window.location.href = 'index.html';
+                    return false;
+                }
+
+                const result = await response.json();
+                if (result.success) {
+                    currentUser = result.user;
+                    return true;
+                } else {
+                    window.location.href = 'index.html';
+                    return false;
+                }
+                
+            } catch (error) {
+                console.error('Erro ao verificar autenticação:', error);
+                window.location.href = 'index.html';
+                return false;
+            }
+        }
+
+        // ✅ INICIALIZAÇÃO DO SISTEMA
+        async function initializeApp() {
+            console.log("🚀 Iniciando aplicação...");
+            
+            const isAuthenticated = await checkAuth();
+            
+            if (!isAuthenticated) {
+                return; // Já redirecionou para index.html
+            }
+
+            // ✅ SE AUTENTICADO, INICIA O SISTEMA
+            console.log("✅ Usuário autenticado, inicializando sistema...");
+            initializeSystem();
+        }
+
+
+
+
+
+
+
+
+
+//conteudo original
+
         // =========================================================================
         // CONFIGURAÇÃO PARA ONLINE - MUDANÇA PRINCIPAL
         // =========================================================================
@@ -5376,7 +5440,17 @@ function getDataAtual() {
     const agora = new Date();
     return `${agora.getFullYear()}-${(agora.getMonth()+1).toString().padStart(2, '0')}-${agora.getDate().toString().padStart(2, '0')}_${agora.getHours().toString().padStart(2, '0')}-${agora.getMinutes().toString().padStart(2, '0')}`;
 }
-		
+
+function initializeSystem() {
+            switchTab('NOTA FISCAL');
+            setupBeforeUnloadListener();
+            startCacheChangeMonitor();
+        }
+
+        // ✅ INICIALIZAR QUANDO CARREGAR
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
+        });		
     </script>
 </body>
 </html>
