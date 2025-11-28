@@ -14,7 +14,8 @@
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
-    <!-- TELA DE LOGIN (igual à atual) -->
+
+    <!-- TELA DE LOGIN -->
     <div id="login-screen" class="min-h-screen flex items-center justify-center bg-gray-100 py-12 px-4 sm:px-6 lg:px-8">
         <div class="max-w-md w-full space-y-8">
             <div class="bg-white p-8 rounded-lg shadow-md">
@@ -97,7 +98,42 @@
             });
         });
 
-        // Função de login modificada para redirecionar
+        // ✅ SISTEMA DE LEMBRAR LOGIN
+        function setupLoginRemember() {
+            console.log("🔧 Iniciando sistema de lembrar login...");
+            
+            try {
+                const localData = localStorage.getItem('nfe_login_credentials');
+                if (localData) {
+                    const savedLogin = JSON.parse(localData);
+                    if (savedLogin && savedLogin.username && savedLogin.password) {
+                        document.getElementById('username').value = savedLogin.username;
+                        document.getElementById('password').value = savedLogin.password;
+                        console.log('✅ Campos preenchidos do localStorage');
+                    }
+                }
+            } catch (error) {
+                console.log('❌ Erro no localStorage:', error);
+            }
+        }
+
+        // ✅ SALVAR CREDENCIAIS
+        function saveLoginCredentials(username, password) {
+            const loginData = {
+                username: username,
+                password: password,
+                timestamp: Date.now()
+            };
+            
+            try {
+                localStorage.setItem('nfe_login_credentials', JSON.stringify(loginData));
+                console.log('✅ Credenciais salvas no localStorage');
+            } catch (error) {
+                console.log('❌ Erro ao salvar credenciais:', error);
+            }
+        }
+
+        // ✅ FUNÇÃO DE LOGIN MODIFICADA PARA REDIRECIONAR
         async function handleLogin() {
             const username = document.getElementById('username').value.trim();
             const password = document.getElementById('password').value;
@@ -153,7 +189,7 @@
             }
         }
 
-        // Verificar se já está autenticado
+        // ✅ VERIFICAR SE JÁ ESTÁ AUTENTICADO
         async function checkExistingAuth() {
             try {
                 const response = await fetch(`${BACKEND_URL}/api/check-auth`, {
@@ -174,7 +210,7 @@
             }
         }
 
-        // Executar verificação ao carregar
+        // ✅ EXECUTAR VERIFICAÇÃO AO CARREGAR
         checkExistingAuth();
     </script>
 </body>
