@@ -664,11 +664,23 @@ body {
 
 
 
-
-		   /* ✅ ESTILOS DE SEGURANÇA */
-#auth-check {
-    display: flex;
-}
+    /* ✅ BLOQUEIO TOTAL ENQUANTO VERIFICA */
+    #auth-check {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: white;
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    #main-system {
+        display: none; /* ✅ ESCONDIDO ATÉ AUTENTICAR */
+    }
 		   
 		   
 </style>
@@ -806,57 +818,99 @@ body {
 
 
 
- // ✅ CONFIGURAÇÃO
-        const BACKEND_URL = "https://api.gtgo.com.br";
-        let currentUser = null;
+ // CONFIGURAÇÃO
+const BACKEND_URL = "https://api.gtgo.com.br";
+let currentUser = null;
+let authChecked = false;
 
+// ✅ VERIFICAÇÃO DE AUTENTICAÇÃO ROBUSTA
 async function checkAuth() {
-    // ✅ MOSTRA TELA DE CARREGAMENTO
-    document.getElementById('auth-check').style.display = 'flex';
+    // ✅ TIMEOUT de segurança - máximo 10 segundos
+    const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error('Timeout')), 10000);
+    });
     
     try {
-        const response = await fetch(`${BACKEND_URL}/api/check-auth`, {
+        const authPromise = fetch(`${BACKEND_URL}/api/check-auth`, {
             method: 'GET',
             credentials: 'include'
         });
         
+        // ✅ USA TIMEOUT
+        const response = await Promise.race([authPromise, timeoutPromise]);
+        
         if (response.status === 401) {
-            // ❌ NÃO AUTENTICADO - REDIRECIONA IMEDIATAMENTE
-            window.location.href = 'index.html';
-            return false;
+            throw new Error('Não autenticado');
         }
 
         const result = await response.json();
         if (result.success) {
             currentUser = result.user;
-            // ✅ AUTENTICADO - MOSTRA O SISTEMA
-            document.getElementById('auth-check').style.display = 'none';
-            document.getElementById('main-system').style.display = 'block';
             return true;
         } else {
-            window.location.href = 'index.html';
-            return false;
+            throw new Error('Autenticação falhou');
         }
         
     } catch (error) {
-        console.error('Erro ao verificar autenticação:', error);
+        console.error('Erro na autenticação:', error);
+        // ✅ REDIRECIONA MESMO COM ERRO
         window.location.href = 'index.html';
         return false;
     }
 }
 
+// ✅ INICIALIZAÇÃO COM FALLBACK
 async function initializeApp() {
-    console.log("🚀 Iniciando aplicação...");
+    if (authChecked) return;
+    authChecked = true;
     
-    const isAuthenticated = await checkAuth();
+    console.log("🚀 Verificando autenticação...");
     
-    if (!isAuthenticated) {
-        return; // Já redirecionou para index.html
+    try {
+        const isAuthenticated = await checkAuth();
+        
+        if (isAuthenticated) {
+            console.log("✅ Usuário autenticado!");
+            // ✅ MOSTRA O SISTEMA
+            document.getElementById('auth-check').style.display = 'none';
+            document.getElementById('main-system').style.display = 'block';
+            initializeSystem();
+        }
+        // Se não autenticado, checkAuth() já redirecionou
+        
+    } catch (error) {
+        console.error('💥 Erro crítico:', error);
+        // ✅ FALLBACK - REDIRECIONA MESMO COM ERRO
+        window.location.href = 'index.html';
     }
-
-    console.log("✅ Usuário autenticado, inicializando sistema...");
-    initializeSystem();
 }
+
+// ✅ INICIALIZAÇÃO DE EMERGÊNCIA
+function emergencyRedirect() {
+    console.log('🚨 Redirecionamento de emergência');
+    window.location.href = 'index.html';
+}
+
+// ✅ VERIFICAÇÃO DUPLA DE SEGURANÇA
+document.addEventListener('DOMContentLoaded', function() {
+    console.log("📄 DOM Carregado - Iniciando verificação...");
+    
+    // ✅ PRIMEIRA VERIFICAÇÃO
+    initializeApp();
+    
+    // ✅ SEGUNDA VERIFICAÇÃO DE SEGURANÇA (timeout)
+    setTimeout(() => {
+        const authCheck = document.getElementById('auth-check');
+        const mainSystem = document.getElementById('main-system');
+        
+        // Se ainda está na tela de carregamento após 8 segundos, redireciona
+        if (authCheck && authCheck.style.display !== 'none' && 
+            mainSystem && mainSystem.style.display !== 'block') {
+            console.log('⏰ Timeout de segurança - redirecionando');
+            emergencyRedirect();
+        }
+    }, 8000);
+});
 
 
 
