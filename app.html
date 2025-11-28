@@ -1061,30 +1061,33 @@ body {
          * ✅ LOGOUT CORRIGIDO - NÃO LIMPA CREDENCIAIS SALVAS
          */
         async function logout() {
-            try {
-                await fetch(`${BACKEND_URL}/api/logout`, {
-                    method: 'POST',
-                    credentials: 'include'
-                });
-            } catch (error) {
-                console.error('Erro no logout:', error);
-            } finally {
-                // ✅ MANTÉM AS CREDENCIAIS SALVAS - NÃO LIMPA!
-                currentUser = null;
-                document.getElementById('main-system').classList.add('hidden');
-                document.getElementById('login-screen').classList.remove('hidden');
-                
-                // ✅ NÃO LIMPA OS CAMPOS - DEIXA AS CREDENCIAIS SALVAS VISÍVEIS
-                // Os campos JÁ devem estar preenchidos pelo setupLoginRemember()
-                
-                showNotification('Logout realizado. Use o botão "Entrar" para acessar novamente.', 'success', 3000);
-                
-                // ✅ FORÇA RECARREGAMENTO DAS CREDENCIAIS (para garantir)
-                setTimeout(() => {
-                    setupLoginRemember();
-                }, 500);
-            }
-        }
+    try {
+        showNotification('Saindo do sistema...', 'loading');
+        
+        await fetch(`${BACKEND_URL}/api/logout`, {
+            method: 'POST',
+            credentials: 'include'
+        });
+        
+        hideNotification();
+        showNotification('Logout realizado! Redirecionando...', 'success', 1000);
+        
+        // ✅ REDIRECIONA PARA A PÁGINA DE LOGIN
+        setTimeout(() => {
+            window.location.href = 'index.html';
+        }, 1500);
+        
+    } catch (error) {
+        console.error('Erro no logout:', error);
+        hideNotification();
+        showNotification('Erro no logout, redirecionando...', 'error');
+        
+        // ✅ REDIRECIONA MESMO COM ERRO
+        setTimeout(() => {
+            window.location.href = 'index.html';
+        }, 2000);
+    }
+}
 
         /*
         function showMainSystem() {
