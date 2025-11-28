@@ -1086,15 +1086,14 @@ body {
             }
         }
 
-        /**
-         * Mostra o sistema principal
-         */
+        /*
         function showMainSystem() {
             document.getElementById('login-screen').classList.add('hidden');
             document.getElementById('main-system').classList.remove('hidden');
             
             initializeSystem();
         }
+*/
 
         /**
          * Inicializa o sistema após login
@@ -1155,33 +1154,19 @@ body {
          * ✅ INICIALIZAÇÃO CORRIGIDA
          */
         async function initializeApp() {
-            console.log("🚀 INICIALIZANDO APLICATIVO...");
-            
-            try {
-                // ✅ CONFIGURA LEMBRAR LOGIN
-                setTimeout(() => {
-                    setupLoginRemember();
-                }, 800);
-                
-                // ✅ VERIFICA AUTENTICAÇÃO EXISTENTE
-                const isAuthenticated = await checkAuth();
-                
-                if (isAuthenticated) {
-                    console.log("✅ Usuário já autenticado, mostrando sistema...");
-                    showMainSystem();
-                    showNotification(`Bem-vindo de volta, ${currentUser}!`, 'success');
-                } else {
-                    console.log("🔐 Usuário não autenticado, mostrando tela de login");
-                    document.getElementById('login-screen').classList.remove('hidden');
-                    document.getElementById('main-system').classList.add('hidden');
-                }
-                
-            } catch (error) {
-                console.error('💥 Erro crítico na inicialização:', error);
-                document.getElementById('login-screen').classList.remove('hidden');
-                document.getElementById('main-system').classList.add('hidden');
-            }
-        }
+    console.log("🚀 Iniciando aplicação...");
+    
+    const isAuthenticated = await checkAuth();
+    
+    if (!isAuthenticated) {
+        return; // Já redirecionou para index.html
+    }
+
+    console.log("✅ Usuário autenticado, inicializando sistema...");
+    
+    // ✅ INICIALIZA DIRETAMENTE - SEM showMainSystem
+    initializeSystem();
+}
 
         // =========================================================================
         // FIM DO SISTEMA DE AUTENTICAÇÃO
