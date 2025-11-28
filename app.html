@@ -661,43 +661,12 @@ body {
     font-weight: bold;
     line-height: 1;
 }
-
-
-
-    /* ✅ BLOQUEIO TOTAL ENQUANTO VERIFICA */
-    #auth-check {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: white;
-        z-index: 9999;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    
-    #main-system {
-        display: none; /* ✅ ESCONDIDO ATÉ AUTENTICAR */
-    }
 		   
 		   
 </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
 
-
-
-<body class="bg-gray-50 min-h-screen">
-    <!-- ✅ TELA DE BLOQUEIO - aparece enquanto verifica autenticação -->
-    <div id="auth-check" class="fixed inset-0 bg-white z-50 flex items-center justify-center">
-        <div class="text-center">
-            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-            <p class="text-gray-600">Verificando autenticação...</p>
-        </div>
-    </div>
-	
    
     <!-- SISTEMA PRINCIPAL (inicialmente oculto) -->
     <div id="main-system">
@@ -818,99 +787,53 @@ body {
 
 
 
- // CONFIGURAÇÃO
-const BACKEND_URL = "https://api.gtgo.com.br";
-let currentUser = null;
-let authChecked = false;
+ // ✅ CONFIGURAÇÃO
+        const BACKEND_URL = "https://api.gtgo.com.br";
+        let currentUser = null;
 
-// ✅ VERIFICAÇÃO DE AUTENTICAÇÃO ROBUSTA
-async function checkAuth() {
-    // ✅ TIMEOUT de segurança - máximo 10 segundos
-    const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error('Timeout')), 10000);
-    });
-    
-    try {
-        const authPromise = fetch(`${BACKEND_URL}/api/check-auth`, {
-            method: 'GET',
-            credentials: 'include'
-        });
-        
-        // ✅ USA TIMEOUT
-        const response = await Promise.race([authPromise, timeoutPromise]);
-        
-        if (response.status === 401) {
-            throw new Error('Não autenticado');
+        // ✅ VERIFICAÇÃO SIMPLES DE AUTENTICAÇÃO
+        async function checkAuth() {
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/check-auth`, {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+                
+                if (response.status === 401) {
+                    window.location.href = 'index.html';
+                    return false;
+                }
+
+                const result = await response.json();
+                if (result.success) {
+                    currentUser = result.user;
+                    return true;
+                } else {
+                    window.location.href = 'index.html';
+                    return false;
+                }
+                
+            } catch (error) {
+                console.error('Erro ao verificar autenticação:', error);
+                window.location.href = 'index.html';
+                return false;
+            }
         }
 
-        const result = await response.json();
-        if (result.success) {
-            currentUser = result.user;
-            return true;
-        } else {
-            throw new Error('Autenticação falhou');
-        }
-        
-    } catch (error) {
-        console.error('Erro na autenticação:', error);
-        // ✅ REDIRECIONA MESMO COM ERRO
-        window.location.href = 'index.html';
-        return false;
-    }
-}
+        // ✅ INICIALIZAÇÃO DO SISTEMA
+        async function initializeApp() {
+            console.log("🚀 Iniciando aplicação...");
+            
+            const isAuthenticated = await checkAuth();
+            
+            if (!isAuthenticated) {
+                return; // Já redirecionou para index.html
+            }
 
-// ✅ INICIALIZAÇÃO COM FALLBACK
-async function initializeApp() {
-    if (authChecked) return;
-    authChecked = true;
-    
-    console.log("🚀 Verificando autenticação...");
-    
-    try {
-        const isAuthenticated = await checkAuth();
-        
-        if (isAuthenticated) {
-            console.log("✅ Usuário autenticado!");
-            // ✅ MOSTRA O SISTEMA
-            document.getElementById('auth-check').style.display = 'none';
-            document.getElementById('main-system').style.display = 'block';
+            // ✅ SE AUTENTICADO, INICIA O SISTEMA
+            console.log("✅ Usuário autenticado, inicializando sistema...");
             initializeSystem();
         }
-        // Se não autenticado, checkAuth() já redirecionou
-        
-    } catch (error) {
-        console.error('💥 Erro crítico:', error);
-        // ✅ FALLBACK - REDIRECIONA MESMO COM ERRO
-        window.location.href = 'index.html';
-    }
-}
-
-// ✅ INICIALIZAÇÃO DE EMERGÊNCIA
-function emergencyRedirect() {
-    console.log('🚨 Redirecionamento de emergência');
-    window.location.href = 'index.html';
-}
-
-// ✅ VERIFICAÇÃO DUPLA DE SEGURANÇA
-document.addEventListener('DOMContentLoaded', function() {
-    console.log("📄 DOM Carregado - Iniciando verificação...");
-    
-    // ✅ PRIMEIRA VERIFICAÇÃO
-    initializeApp();
-    
-    // ✅ SEGUNDA VERIFICAÇÃO DE SEGURANÇA (timeout)
-    setTimeout(() => {
-        const authCheck = document.getElementById('auth-check');
-        const mainSystem = document.getElementById('main-system');
-        
-        // Se ainda está na tela de carregamento após 8 segundos, redireciona
-        if (authCheck && authCheck.style.display !== 'none' && 
-            mainSystem && mainSystem.style.display !== 'block') {
-            console.log('⏰ Timeout de segurança - redirecionando');
-            emergencyRedirect();
-        }
-    }, 8000);
-});
 
 
 
