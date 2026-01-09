@@ -1746,10 +1746,12 @@ function realizarMudancaParaConferencia(sheetName) {
         const cellClassesB = 'cursor-text hover:bg-indigo-50/50 focus:bg-indigo-100 border border-transparent focus:border-indigo-400 transition expand-mode-cell text-center w-20'; // ✅ w-20 para largura fixa
 
         html += `<tr data-row-index="${sheetRowIndex}" class="${rowClass}">
-                    <td ${editAttributesA} onkeydown="handleContagemCellKeydown(event, this)" class="${cellClassesA}">${cellValueA}</td>
-                    <td ${editAttributesB} class="${cellClassesB} quantidade-cell">${cellValueB}</td>
-                    <td class="expand-mode-cell descricao-cell" data-row-index="${sheetRowIndex}" data-sheet-range="${sheetRangeC}">${cellValueC}</td>
-                 </tr>`;
+            <td ${editAttributesA} onkeydown="handleContagemCellKeydown(event, this)" class="${cellClassesA}">${cellValueA}</td>
+            <td ${editAttributesB} class="${cellClassesB} quantidade-cell">
+                <div style="width: 100%; text-align: center;">${cellValueB}</div>
+            </td>
+            <td class="expand-mode-cell descricao-cell" data-row-index="${sheetRowIndex}" data-sheet-range="${sheetRangeC}">${cellValueC}</td>
+         </tr>`;
     }
 
     html += `</tbody></table></div>`;
