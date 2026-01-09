@@ -1644,66 +1644,77 @@ function realizarMudancaParaConferencia(sheetName) {
          * Renderiza a tabela da Contagem Loja com 3000 linhas pré-renderizadas e 2 colunas.
          */
         function renderContagemTableFixedRows(data, headers) {
-            const fixedRows = 3000;
-            
-            const cacheKey = `${CACHE_KEY}_${currentContador}`;
-            const cachedData = loadFromCache(cacheKey);
-            
-            const existingData = (data.length > 0 && headers.length > 0 && String(data[0][0]) === headers[0]) 
-                                 ? data.slice(1) 
-                                 : data;
+    const fixedRows = 3000;
+    
+    const cacheKey = `${CACHE_KEY}_${currentContador}`;
+    const cachedData = loadFromCache(cacheKey);
+    
+    const existingData = (data.length > 0 && headers.length > 0 && String(data[0][0]) === headers[0]) 
+                         ? data.slice(1) 
+                         : data;
 
-            let html = `
-                <div class="rounded-lg border border-gray-200 overflow-x-auto shadow-sm">
-                    <table class="mock-table w-full text-sm" id="contagem-table">
-                        <thead class="bg-gray-50 sticky top-0">
-                            <tr>
-                                <th>Código de Barras</th>
-                                <th>Descrição</th>
-                            </tr>
-                        </thead>
-                        <tbody>`;
+    let html = `
+        <div class="rounded-lg border border-gray-200 overflow-x-auto shadow-sm">
+            <table class="mock-table w-full text-sm" id="contagem-table">
+                <thead class="bg-gray-50 sticky top-0">
+                    <tr>
+                        <th>Código de Barras</th>
+                        <th>Qtd</th> <!-- ✅ NOVA COLUNA -->
+                        <th>Descrição</th>
+                    </tr>
+                </thead>
+                <tbody>`;
 
-            for (let rowIndex = 0; rowIndex < fixedRows; rowIndex++) {
-                const sheetRowIndex = rowIndex + 1;
-                const sheetRangeA = `A${sheetRowIndex}`;
-                const sheetRangeC = `C${sheetRowIndex}`;
-                
-                let cellValueA = '';
-                if (cachedData[sheetRangeA] !== undefined) {
-                    cellValueA = cachedData[sheetRangeA];
-                } else if (existingData[rowIndex] && existingData[rowIndex][0] !== undefined) {
-                    cellValueA = existingData[rowIndex][0];
-                }
-                
-                let cellValueC = '';
-                if (cachedData[sheetRangeC] !== undefined) {
-                    cellValueC = cachedData[sheetRangeC];
-                } else if (existingData[rowIndex] && existingData[rowIndex][2] !== undefined) {
-                    cellValueC = existingData[rowIndex][2];
-                }
-
-                const hasRedBackground = cellValueA !== '' && cellValueC === '';
-                const rowClass = hasRedBackground ? 'bg-red-50' : '';
-
-                const editAttributes = `contenteditable="true"
-                                        onblur="handleContagemCellEdit(this, '${sheetRangeA}', '${currentContador}')"
-                                        onkeydown="handleContagemKeyPress(event, '${sheetRangeA}', '${currentContador}')"
-                                        oninput="handleContagemCellInput(this)"
-                                        data-original-value="${cellValueA}"
-                                        data-sheet-range="${sheetRangeA}"`;
-                
-                const cellClassesA = 'cursor-text hover:bg-indigo-50/50 focus:bg-indigo-100 border border-transparent focus:border-indigo-400 transition expand-mode-cell';
-
-                html += `<tr data-row-index="${sheetRowIndex}" class="${rowClass}">
-                            <td ${editAttributes} onkeydown="handleContagemCellKeydown(event, this)" class="${cellClassesA}">${cellValueA}</td>
-                            <td class="expand-mode-cell descricao-cell" data-row-index="${sheetRowIndex}" data-sheet-range="${sheetRangeC}">${cellValueC}</td>
-                         </tr>`;
-            }
-
-            html += `</tbody></table></div>`;
-            return html;
+    for (let rowIndex = 0; rowIndex < fixedRows; rowIndex++) {
+        const sheetRowIndex = rowIndex + 1;
+        const sheetRangeA = `A${sheetRowIndex}`;
+        const sheetRangeB = `B${sheetRowIndex}`; // ✅ NOVA
+        const sheetRangeC = `C${sheetRowIndex}`;
+        
+        let cellValueA = '';
+        if (cachedData[sheetRangeA] !== undefined) {
+            cellValueA = cachedData[sheetRangeA];
+        } else if (existingData[rowIndex] && existingData[rowIndex][0] !== undefined) {
+            cellValueA = existingData[rowIndex][0];
         }
+        
+        // ✅ VALOR DA COLUNA B (QUANTIDADE)
+        let cellValueB = '';
+        if (cachedData[sheetRangeB] !== undefined) {
+            cellValueB = cachedData[sheetRangeB];
+        } else if (existingData[rowIndex] && existingData[rowIndex][1] !== undefined) {
+            cellValueB = existingData[rowIndex][1];
+        }
+        
+        let cellValueC = '';
+        if (cachedData[sheetRangeC] !== undefined) {
+            cellValueC = cachedData[sheetRangeC];
+        } else if (existingData[rowIndex] && existingData[rowIndex][2] !== undefined) {
+            cellValueC = existingData[rowIndex][2];
+        }
+
+        const hasRedBackground = cellValueA !== '' && cellValueC === '';
+        const rowClass = hasRedBackground ? 'bg-red-50' : '';
+
+        const editAttributes = `contenteditable="true"
+                                onblur="handleContagemCellEdit(this, '${sheetRangeA}', '${currentContador}')"
+                                onkeydown="handleContagemKeyPress(event, '${sheetRangeA}', '${currentContador}')"
+                                oninput="handleContagemCellInput(this)"
+                                data-original-value="${cellValueA}"
+                                data-sheet-range="${sheetRangeA}"`;
+        
+        const cellClassesA = 'cursor-text hover:bg-indigo-50/50 focus:bg-indigo-100 border border-transparent focus:border-indigo-400 transition expand-mode-cell';
+
+        html += `<tr data-row-index="${sheetRowIndex}" class="${rowClass}">
+                    <td ${editAttributes} onkeydown="handleContagemCellKeydown(event, this)" class="${cellClassesA}">${cellValueA}</td>
+                    <td class="quantidade-cell expand-mode-cell text-center" data-row-index="${sheetRowIndex}" data-sheet-range="${sheetRangeB}">${cellValueB}</td> <!-- ✅ NOVA CÉLULA -->
+                    <td class="expand-mode-cell descricao-cell" data-row-index="${sheetRowIndex}" data-sheet-range="${sheetRangeC}">${cellValueC}</td>
+                 </tr>`;
+    }
+
+    html += `</tbody></table></div>`;
+    return html;
+}
 
 
     function renderTable(sheetName, data, headers) {
@@ -1889,7 +1900,7 @@ if (isConferencia && i === 5) { // Coluna "Corrigir"
         }
 
     } else if (sheetName === "CONTAGEM LOJA") {
-        headers = ["Código de Barras", "Descrição"]; 
+         headers = ["Código de Barras", "Qtd", "Descrição"]; // ✅ ADICIONADO "Qtd"
         targetElementId = 'dynamic-table-content-contagem';
         
         setTimeout(() => {
@@ -2268,67 +2279,83 @@ function renderNotasFiscaisInfo(notasFiscaisInfo) {
          * Manipula a edição de células na Contagem Loja (com cache)
          */
         function handleContagemCellEdit(element, sheetRange, sheetName) {
-            const newValue = element.textContent.trim();
-            const originalValue = element.dataset.originalValue || '';
+    const newValue = element.textContent.trim();
+    const originalValue = element.dataset.originalValue || '';
 
-            if (newValue === originalValue) {
-                return;
-            }
+    if (newValue === originalValue) {
+        return;
+    }
 
-            const cacheKey = `${CACHE_KEY}_${currentContador}`;
-            const cachedData = loadFromCache(cacheKey);
+    const cacheKey = `${CACHE_KEY}_${currentContador}`;
+    const cachedData = loadFromCache(cacheKey);
+    
+    // ✅ NOVO: Calcular a coluna B correspondente (A1 → B1)
+    const rowIndex = sheetRange.slice(1); // Extrai o número da linha
+    const sheetRangeB = `B${rowIndex}`;
+    
+    if (newValue === '') {
+        delete cachedData[sheetRange];
+        const sheetRangeC = `C${rowIndex}`;
+        delete cachedData[sheetRangeC];
+        delete cachedData[sheetRangeB]; // ✅ REMOVER também da coluna B
+    } else {
+        cachedData[sheetRange] = newValue;
+        
+        // ✅ NOVO: ADICIONAR SEMPRE "1" NA COLUNA B QUANDO HOUVER CÓDIGO
+        if (!cachedData[sheetRangeB] || cachedData[sheetRangeB] === '') {
+            cachedData[sheetRangeB] = "1";
             
-            if (newValue === '') {
-                delete cachedData[sheetRange];
-                const rowIndex = sheetRange.slice(1);
-                const sheetRangeC = `C${rowIndex}`;
-                delete cachedData[sheetRangeC];
-            } else {
-                cachedData[sheetRange] = newValue;
-                
-                const descricao = buscarDescricaoPorCodigo(newValue);
-                const row = element.closest('tr');
-                const descCell = row.querySelector('.descricao-cell');
-                
-                if (descricao) {
-                    if (descCell) {
-                        descCell.textContent = descricao;
-                        const sheetRangeC = descCell.getAttribute('data-sheet-range');
-                        cachedData[sheetRangeC] = descricao;
-                    }
-                    row.classList.remove('bg-red-50');
-                } else {
-                    if (descCell) {
-                        descCell.textContent = '';
-                        const sheetRangeC = descCell.getAttribute('data-sheet-range');
-                        delete cachedData[sheetRangeC];
-                    }
-                    row.classList.add('bg-red-50');
-                    
-                    const timeSinceInput = Date.now() - lastInputTime;
-                    if (timeSinceInput > INPUT_DEBOUNCE) {
-                        playErrorSoundIfAllowed();
-                    }
-                }
-            }
-            
-            saveToCache(cachedData, cacheKey);
-
-            element.dataset.originalValue = newValue;
-
-            if (newValue !== '') {
-                pendingUpdates.set(sheetRange, newValue);
-                editCount++;
-            } else {
-                pendingUpdates.delete(sheetRange);
-            }
-
-            updatePendingCount();
-
-            if (newValue !== '' && editCount >= BATCH_SIZE) {
-                processBatchUpdate();
+            // ✅ ATUALIZAR VISUALMENTE NO FRONTEND
+            const row = element.closest('tr');
+            const cellB = row.querySelector('.quantidade-cell'); // Vamos criar esta classe
+            if (cellB) {
+                cellB.textContent = "1";
             }
         }
+        
+        const descricao = buscarDescricaoPorCodigo(newValue);
+        const row = element.closest('tr');
+        const descCell = row.querySelector('.descricao-cell');
+        
+        if (descricao) {
+            if (descCell) {
+                descCell.textContent = descricao;
+                const sheetRangeC = descCell.getAttribute('data-sheet-range');
+                cachedData[sheetRangeC] = descricao;
+            }
+            row.classList.remove('bg-red-50');
+        } else {
+            if (descCell) {
+                descCell.textContent = '';
+                const sheetRangeC = descCell.getAttribute('data-sheet-range');
+                delete cachedData[sheetRangeC];
+            }
+            row.classList.add('bg-red-50');
+            
+            const timeSinceInput = Date.now() - lastInputTime;
+            if (timeSinceInput > INPUT_DEBOUNCE) {
+                playErrorSoundIfAllowed();
+            }
+        }
+    }
+    
+    saveToCache(cachedData, cacheKey);
+
+    element.dataset.originalValue = newValue;
+
+    if (newValue !== '') {
+        pendingUpdates.set(sheetRange, newValue);
+        editCount++;
+    } else {
+        pendingUpdates.delete(sheetRange);
+    }
+
+    updatePendingCount();
+
+    if (newValue !== '' && editCount >= BATCH_SIZE) {
+        processBatchUpdate();
+    }
+}
 
         /**
          * ⚡⚡⚡ FUNÇÃO CORRIGIDA: Processa atualização em lote - AGORA COM SUPORTE A MÚLTIPLOS CONTADORES
