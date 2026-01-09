@@ -1754,9 +1754,9 @@ function realizarMudancaParaConferencia(sheetName) {
 
         html += `<tr data-row-index="${sheetRowIndex}" class="${rowClass}">
                     <td ${editAttributesA} onkeydown="handleContagemCellKeydown(event, this)" class="${cellClassesA}">${cellValueA}</td>
-                    <td ${editAttributesB} class="${cellClassesB}">
-                        <div class="flex items-center justify-center h-full w-full">${cellValueB}</div>
-                    </td>
+                    <td ${editAttributesB} class="${cellClassesB} quantidade-cell">
+    <div class="quantidade-conteudo" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; text-align: center;">${cellValueB}</div>
+</td>
                     <td class="expand-mode-cell descricao-cell text-left" data-row-index="${sheetRowIndex}" data-sheet-range="${sheetRangeC}">${cellValueC}</td>
                  </tr>`;
     }
@@ -2357,9 +2357,15 @@ function renderNotasFiscaisInfo(notasFiscaisInfo) {
             // ✅ ATUALIZAR VISUALMENTE NO FRONTEND
             const row = element.closest('tr');
             const cellB = row.querySelector('.quantidade-cell');
-            if (cellB && cellB.textContent.trim() === '') {
-                cellB.textContent = "1";
-                cellB.dataset.originalValue = "1";
+if (cellB) {
+    const conteudoDiv = cellB.querySelector('.quantidade-conteudo');
+    if (conteudoDiv) {
+        conteudoDiv.textContent = "1";
+    } else {
+        cellB.innerHTML = `<div class="quantidade-conteudo" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; text-align: center;">1</div>`;
+    }
+    cellB.dataset.originalValue = "1";
+}
             }
         }
         
