@@ -663,6 +663,30 @@ body {
     font-weight: bold;
     line-height: 1;
 }
+
+
+
+
+		   /* Estilo para os botões de quantidade */
+.quantidade-cell .flex button {
+    transition: all 0.2s ease;
+    min-width: 24px;
+    min-height: 24px;
+    border: 1px solid #d1d5db;
+}
+
+.quantidade-cell .flex button:hover {
+    background-color: #e5e7eb;
+    transform: scale(1.05);
+}
+
+.quantidade-valor {
+    font-size: 14px;
+    font-weight: 500;
+    color: #1f2937;
+    min-width: 24px;
+    text-align: center;
+}
 		   
 		   
 </style>
@@ -1517,45 +1541,45 @@ function realizarMudancaParaConferencia(sheetName) {
             `;
         }
 
-        /**
-         * Retorna o HTML completo da aba CONTAGEM LOJA com mini-menu de contadores.
-         */
-        function renderContagemLojaLayout() {
-            return `
-                <div id="contagem-loja-content">
-                    <!-- Mini-menu de Contadores -->
-                    <div class="flex border-b border-gray-200 mb-4 print-hidden">
-                        <button data-contador="CONTAGEM LOJA" class="contador-button px-4 py-2 text-sm font-medium border-b-2 border-blue-600 text-blue-600 transition-colors duration-150">Contador 1</button>
-                        <button data-contador="CONTADOR 2" class="contador-button px-4 py-2 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 transition-colors duration-150">Contador 2</button>
-                        <button data-contador="CONTADOR 3" class="contador-button px-4 py-2 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 transition-colors duration-150">Contador 3</button>
-                        <button data-contador="CONTADOR 4" class="contador-button px-4 py-2 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 transition-colors duration-150">Contador 4</button>
-                        <button data-contador="CONTADOR 5" class="contador-button px-4 py-2 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 transition-colors duration-150">Contador 5</button>
-                    </div>
+       /**
+ * Retorna o HTML completo da aba CONTAGEM LOJA com mini-menu de contadores.
+ */
+function renderContagemLojaLayout() {
+    return `
+        <div id="contagem-loja-content">
+            <!-- Mini-menu de Contadores -->
+            <div class="flex border-b border-gray-200 mb-4 print-hidden">
+                <button data-contador="CONTAGEM LOJA" class="contador-button px-4 py-2 text-sm font-medium border-b-2 border-blue-600 text-blue-600 transition-colors duration-150">Contador 1</button>
+                <button data-contador="CONTADOR 2" class="contador-button px-4 py-2 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 transition-colors duration-150">Contador 2</button>
+                <button data-contador="CONTADOR 3" class="contador-button px-4 py-2 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 transition-colors duration-150">Contador 3</button>
+                <button data-contador="CONTADOR 4" class="contador-button px-4 py-2 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 transition-colors duration-150">Contador 4</button>
+                <button data-contador="CONTADOR 5" class="contador-button px-4 py-2 text-sm font-medium border-b-2 border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 transition-colors duration-150">Contador 5</button>
+            </div>
 
-                    <div class="flex flex-wrap gap-3 pb-4 mb-4 border-b border-gray-200 print-hidden">
-                        <div class="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-                            <p class="font-semibold text-yellow-800 text-lg">Escanear abaixo</p>
-                            <p class="text-yellow-600 text-sm mt-1">Dados salvos localmente (atualização em lote)</p>
-                        </div>
-                        <button onclick="forceBatchUpdate()" class="flex items-center space-x-2 px-4 py-2 bg-blue-100 text-blue-700 rounded-lg shadow-sm hover:bg-blue-200 transition duration-150 text-sm font-medium border border-blue-300">
-                            <span>Forçar Envio</span>
-                            <span id="pending-count" class="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs">0</span>
-                        </button>
-
-						 <button onclick="alternarModoDesktop()" class="btn-desktop-mode mobile-only flex items-center space-x-2 px-4 py-2 bg-gray-100 text-gray-800 rounded-lg shadow-sm hover:bg-gray-200 transition duration-150 text-sm font-medium border border-gray-300">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-        </svg>
-        <span id="desktop-mode-text-contagem">Modo Desktop</span>
-    </button>
-						
-                    </div>
-                    <div id="dynamic-table-content-contagem">
-                        <p class="text-center text-gray-400 py-10">Carregando dados...</p>
-                    </div>
+            <div class="flex flex-wrap gap-3 pb-4 mb-4 border-b border-gray-200 print-hidden">
+                <div class="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                    <p class="font-semibold text-yellow-800 text-lg">Escanear abaixo</p>
+                    <p class="text-yellow-600 text-sm mt-1">Dados salvos localmente (atualização em lote)</p>
+                    <p class="text-yellow-600 text-xs mt-1">Quantidade padrão: 1 - Use +/- para ajustar</p>
                 </div>
-            `;
-        }
+                <button onclick="forceBatchUpdate()" class="flex items-center space-x-2 px-4 py-2 bg-blue-100 text-blue-700 rounded-lg shadow-sm hover:bg-blue-200 transition duration-150 text-sm font-medium border border-blue-300">
+                    <span>Forçar Envio</span>
+                    <span id="pending-count" class="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs">0</span>
+                </button>
+
+                <button onclick="alternarModoDesktop()" class="btn-desktop-mode mobile-only flex items-center space-x-2 px-4 py-2 bg-gray-100 text-gray-800 rounded-lg shadow-sm hover:bg-gray-200 transition duration-150 text-sm font-medium border border-gray-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                    <span id="desktop-mode-text-contagem">Modo Desktop</span>
+                </button>
+            </div>
+            <div id="dynamic-table-content-contagem">
+                <p class="text-center text-gray-400 py-10">Carregando dados...</p>
+            </div>
+        </div>
+    `;
+}
         
         /**
          * Retorna o HTML completo da aba CONFERENCIA (com botão de impressão e modo scroll).
@@ -1641,69 +1665,90 @@ function realizarMudancaParaConferencia(sheetName) {
         }
 
         /**
-         * Renderiza a tabela da Contagem Loja com 3000 linhas pré-renderizadas e 2 colunas.
-         */
-        function renderContagemTableFixedRows(data, headers) {
-            const fixedRows = 3000;
-            
-            const cacheKey = `${CACHE_KEY}_${currentContador}`;
-            const cachedData = loadFromCache(cacheKey);
-            
-            const existingData = (data.length > 0 && headers.length > 0 && String(data[0][0]) === headers[0]) 
-                                 ? data.slice(1) 
-                                 : data;
+ * Renderiza a tabela da Contagem Loja com 3000 linhas pré-renderizadas e AGORA 3 COLUNAS.
+ */
+function renderContagemTableFixedRows(data, headers) {
+    const fixedRows = 3000;
+    
+    const cacheKey = `${CACHE_KEY}_${currentContador}`;
+    const cachedData = loadFromCache(cacheKey);
+    
+    const existingData = (data.length > 0 && headers.length > 0 && String(data[0][0]) === headers[0]) 
+                         ? data.slice(1) 
+                         : data;
 
-            let html = `
-                <div class="rounded-lg border border-gray-200 overflow-x-auto shadow-sm">
-                    <table class="mock-table w-full text-sm" id="contagem-table">
-                        <thead class="bg-gray-50 sticky top-0">
-                            <tr>
-                                <th>Código de Barras</th>
-                                <th>Descrição</th>
-                            </tr>
-                        </thead>
-                        <tbody>`;
+    let html = `
+        <div class="rounded-lg border border-gray-200 overflow-x-auto shadow-sm">
+            <table class="mock-table w-full text-sm" id="contagem-table">
+                <thead class="bg-gray-50 sticky top-0">
+                    <tr>
+                        <th>Código de Barras</th>
+                        <th>Descrição</th>
+                        <th>Quantidade</th>
+                    </tr>
+                </thead>
+                <tbody>`;
 
-            for (let rowIndex = 0; rowIndex < fixedRows; rowIndex++) {
-                const sheetRowIndex = rowIndex + 1;
-                const sheetRangeA = `A${sheetRowIndex}`;
-                const sheetRangeC = `C${sheetRowIndex}`;
-                
-                let cellValueA = '';
-                if (cachedData[sheetRangeA] !== undefined) {
-                    cellValueA = cachedData[sheetRangeA];
-                } else if (existingData[rowIndex] && existingData[rowIndex][0] !== undefined) {
-                    cellValueA = existingData[rowIndex][0];
-                }
-                
-                let cellValueC = '';
-                if (cachedData[sheetRangeC] !== undefined) {
-                    cellValueC = cachedData[sheetRangeC];
-                } else if (existingData[rowIndex] && existingData[rowIndex][2] !== undefined) {
-                    cellValueC = existingData[rowIndex][2];
-                }
-
-                const hasRedBackground = cellValueA !== '' && cellValueC === '';
-                const rowClass = hasRedBackground ? 'bg-red-50' : '';
-
-                const editAttributes = `contenteditable="true"
-                                        onblur="handleContagemCellEdit(this, '${sheetRangeA}', '${currentContador}')"
-                                        onkeydown="handleContagemKeyPress(event, '${sheetRangeA}', '${currentContador}')"
-                                        oninput="handleContagemCellInput(this)"
-                                        data-original-value="${cellValueA}"
-                                        data-sheet-range="${sheetRangeA}"`;
-                
-                const cellClassesA = 'cursor-text hover:bg-indigo-50/50 focus:bg-indigo-100 border border-transparent focus:border-indigo-400 transition expand-mode-cell';
-
-                html += `<tr data-row-index="${sheetRowIndex}" class="${rowClass}">
-                            <td ${editAttributes} onkeydown="handleContagemCellKeydown(event, this)" class="${cellClassesA}">${cellValueA}</td>
-                            <td class="expand-mode-cell descricao-cell" data-row-index="${sheetRowIndex}" data-sheet-range="${sheetRangeC}">${cellValueC}</td>
-                         </tr>`;
-            }
-
-            html += `</tbody></table></div>`;
-            return html;
+    for (let rowIndex = 0; rowIndex < fixedRows; rowIndex++) {
+        const sheetRowIndex = rowIndex + 1;
+        const sheetRangeA = `A${sheetRowIndex}`;
+        const sheetRangeC = `C${sheetRowIndex}`;
+        
+        let cellValueA = '';
+        if (cachedData[sheetRangeA] !== undefined) {
+            cellValueA = cachedData[sheetRangeA];
+        } else if (existingData[rowIndex] && existingData[rowIndex][0] !== undefined) {
+            cellValueA = existingData[rowIndex][0];
         }
+        
+        let cellValueC = '';
+        if (cachedData[sheetRangeC] !== undefined) {
+            cellValueC = cachedData[sheetRangeC];
+        } else if (existingData[rowIndex] && existingData[rowIndex][2] !== undefined) {
+            cellValueC = existingData[rowIndex][2];
+        }
+
+        // ✅ Buscar quantidade do cache (coluna D)
+        const sheetRangeD = `D${sheetRowIndex}`;
+        let quantidade = '1'; // Valor padrão
+        if (cachedData[sheetRangeD] !== undefined) {
+            quantidade = cachedData[sheetRangeD];
+        }
+
+        const hasRedBackground = cellValueA !== '' && cellValueC === '';
+        const rowClass = hasRedBackground ? 'bg-red-50' : '';
+
+        const editAttributes = `contenteditable="true"
+                                onblur="handleContagemCellEdit(this, '${sheetRangeA}', '${currentContador}')"
+                                onkeydown="handleContagemKeyPress(event, '${sheetRangeA}', '${currentContador}')"
+                                oninput="handleContagemCellInput(this)"
+                                data-original-value="${cellValueA}"
+                                data-sheet-range="${sheetRangeA}"`;
+        
+        const cellClassesA = 'cursor-text hover:bg-indigo-50/50 focus:bg-indigo-100 border border-transparent focus:border-indigo-400 transition expand-mode-cell';
+
+        html += `<tr data-row-index="${sheetRowIndex}" class="${rowClass}">
+                    <td ${editAttributes} onkeydown="handleContagemCellKeydown(event, this)" class="${cellClassesA}">${cellValueA}</td>
+                    <td class="expand-mode-cell descricao-cell" data-row-index="${sheetRowIndex}" data-sheet-range="${sheetRangeC}">${cellValueC}</td>
+                    <td class="text-center expand-mode-cell quantidade-cell" data-row-index="${sheetRowIndex}" data-sheet-range="${sheetRangeD}">
+                        <div class="flex items-center justify-center gap-1">
+                            <button onclick="diminuirQuantidade(this, '${sheetRangeD}')" 
+                                    class="w-6 h-6 flex items-center justify-center bg-gray-200 rounded hover:bg-gray-300 transition duration-150 text-sm font-bold">
+                                -
+                            </button>
+                            <span class="quantidade-valor min-w-6 text-center font-medium">${quantidade}</span>
+                            <button onclick="aumentarQuantidade(this, '${sheetRangeD}')" 
+                                    class="w-6 h-6 flex items-center justify-center bg-gray-200 rounded hover:bg-gray-300 transition duration-150 text-sm font-bold">
+                                +
+                            </button>
+                        </div>
+                    </td>
+                 </tr>`;
+    }
+
+    html += `</tbody></table></div>`;
+    return html;
+}
 
 
     function renderTable(sheetName, data, headers) {
@@ -1889,34 +1934,35 @@ if (isConferencia && i === 5) { // Coluna "Corrigir"
         }
 
     } else if (sheetName === "CONTAGEM LOJA") {
-        headers = ["Código de Barras", "Descrição"]; 
-        targetElementId = 'dynamic-table-content-contagem';
+    headers = ["Código de Barras", "Descrição", "Quantidade"]; // ✅ AGORA 3 COLUNAS
+    targetElementId = 'dynamic-table-content-contagem';
+    
+    setTimeout(() => {
+        const contadorButtons = document.querySelectorAll('.contador-button');
+        contadorButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                switchContador(this.getAttribute('data-contador'));
+            });
+        });
+    }, 100);
+    
+    if (!notaFiscalData) {
+        await loadNotaFiscalDataForCache();
+    }
+    
+    const targetElement = document.getElementById(targetElementId);
+    if (targetElement) {
+        targetElement.innerHTML = renderContagemTableFixedRows(data, headers);
+        
+        updatePendingCount();
+        
+        startCacheChangeMonitor();
         
         setTimeout(() => {
-            const contadorButtons = document.querySelectorAll('.contador-button');
-            contadorButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    switchContador(this.getAttribute('data-contador'));
-                });
-            });
-        }, 100);
-        
-        if (!notaFiscalData) {
-            await loadNotaFiscalDataForCache();
-        }
-        
-        const targetElement = document.getElementById(targetElementId);
-        if (targetElement) {
-            targetElement.innerHTML = renderContagemTableFixedRows(data, headers);
-            
-            updatePendingCount();
-            
-            startCacheChangeMonitor();
-            
-            setTimeout(() => {
-                requestAnimationFrame(focusNextEmptyContagemCell);
-            }, 100); 
-        }
+            requestAnimationFrame(focusNextEmptyContagemCell);
+        }, 100); 
+    }
+}
 
     } else if (sheetName === "CONFERENCIA") {
     headers = ["Código de Barras", "Descrição do Produto", "Quantidade NF", "Contagem Loja", "Diferença", "Corrigir", "Danos/Defeito e Obs"]; 
@@ -2265,122 +2311,145 @@ function renderNotasFiscaisInfo(notasFiscaisInfo) {
         }
 
         /**
-         * Manipula a edição de células na Contagem Loja (com cache)
-         */
-        function handleContagemCellEdit(element, sheetRange, sheetName) {
-            const newValue = element.textContent.trim();
-            const originalValue = element.dataset.originalValue || '';
+ * Manipula a edição de células na Contagem Loja (com cache)
+ * ✅ AGORA TAMBÉM INICIALIZA QUANTIDADE COMO 1
+ */
+function handleContagemCellEdit(element, sheetRange, sheetName) {
+    const newValue = element.textContent.trim();
+    const originalValue = element.dataset.originalValue || '';
 
-            if (newValue === originalValue) {
-                return;
-            }
+    if (newValue === originalValue) {
+        return;
+    }
 
-            const cacheKey = `${CACHE_KEY}_${currentContador}`;
-            const cachedData = loadFromCache(cacheKey);
+    const cacheKey = `${CACHE_KEY}_${currentContador}`;
+    const cachedData = loadFromCache(cacheKey);
+    
+    if (newValue === '') {
+        delete cachedData[sheetRange];
+        const rowIndex = sheetRange.slice(1);
+        const sheetRangeC = `C${rowIndex}`;
+        delete cachedData[sheetRangeC];
+        const sheetRangeD = `D${rowIndex}`;
+        delete cachedData[sheetRangeD]; // Remove quantidade também
+    } else {
+        cachedData[sheetRange] = newValue;
+        
+        // ✅ INICIALIZA QUANTIDADE COMO 1 SE FOR NOVO CÓDIGO DE BARRAS
+        const rowIndex = sheetRange.slice(1);
+        const sheetRangeD = `D${rowIndex}`;
+        
+        // Se não existe quantidade definida ainda, define como 1
+        if (cachedData[sheetRangeD] === undefined) {
+            cachedData[sheetRangeD] = '1';
             
-            if (newValue === '') {
-                delete cachedData[sheetRange];
-                const rowIndex = sheetRange.slice(1);
-                const sheetRangeC = `C${rowIndex}`;
+            // Atualiza visualmente na tabela
+            const row = element.closest('tr');
+            const quantidadeCell = row.querySelector('.quantidade-cell .quantidade-valor');
+            if (quantidadeCell) {
+                quantidadeCell.textContent = '1';
+            }
+        }
+        
+        const descricao = buscarDescricaoPorCodigo(newValue);
+        const row = element.closest('tr');
+        const descCell = row.querySelector('.descricao-cell');
+        
+        if (descricao) {
+            if (descCell) {
+                descCell.textContent = descricao;
+                const sheetRangeC = descCell.getAttribute('data-sheet-range');
+                cachedData[sheetRangeC] = descricao;
+            }
+            row.classList.remove('bg-red-50');
+        } else {
+            if (descCell) {
+                descCell.textContent = '';
+                const sheetRangeC = descCell.getAttribute('data-sheet-range');
                 delete cachedData[sheetRangeC];
-            } else {
-                cachedData[sheetRange] = newValue;
-                
-                const descricao = buscarDescricaoPorCodigo(newValue);
-                const row = element.closest('tr');
-                const descCell = row.querySelector('.descricao-cell');
-                
-                if (descricao) {
-                    if (descCell) {
-                        descCell.textContent = descricao;
-                        const sheetRangeC = descCell.getAttribute('data-sheet-range');
-                        cachedData[sheetRangeC] = descricao;
-                    }
-                    row.classList.remove('bg-red-50');
-                } else {
-                    if (descCell) {
-                        descCell.textContent = '';
-                        const sheetRangeC = descCell.getAttribute('data-sheet-range');
-                        delete cachedData[sheetRangeC];
-                    }
-                    row.classList.add('bg-red-50');
-                    
-                    const timeSinceInput = Date.now() - lastInputTime;
-                    if (timeSinceInput > INPUT_DEBOUNCE) {
-                        playErrorSoundIfAllowed();
-                    }
-                }
             }
+            row.classList.add('bg-red-50');
             
-            saveToCache(cachedData, cacheKey);
-
-            element.dataset.originalValue = newValue;
-
-            if (newValue !== '') {
-                pendingUpdates.set(sheetRange, newValue);
-                editCount++;
-            } else {
-                pendingUpdates.delete(sheetRange);
-            }
-
-            updatePendingCount();
-
-            if (newValue !== '' && editCount >= BATCH_SIZE) {
-                processBatchUpdate();
+            const timeSinceInput = Date.now() - lastInputTime;
+            if (timeSinceInput > INPUT_DEBOUNCE) {
+                playErrorSoundIfAllowed();
             }
         }
+    }
+    
+    saveToCache(cachedData, cacheKey);
 
+    element.dataset.originalValue = newValue;
+
+    if (newValue !== '') {
+        pendingUpdates.set(sheetRange, newValue);
+        editCount++;
+    } else {
+        pendingUpdates.delete(sheetRange);
+    }
+
+    updatePendingCount();
+
+    if (newValue !== '' && editCount >= BATCH_SIZE) {
+        processBatchUpdate();
+    }
+}
         /**
-         * ⚡⚡⚡ FUNÇÃO CORRIGIDA: Processa atualização em lote - AGORA COM SUPORTE A MÚLTIPLOS CONTADORES
-         */
-        async function processBatchUpdate() {
-            const cacheKey = `${CACHE_KEY}_${currentContador}`;
-            const cachedData = loadFromCache(cacheKey);
+ * ⚡⚡⚡ FUNÇÃO CORRIGIDA: Processa atualização em lote - AGORA COM SUPORTE A MÚLTIPLOS CONTADORES
+ * ✅ AGORA ENVIA TAMBÉM A COLUNA D (QUANTIDADE)
+ */
+async function processBatchUpdate() {
+    const cacheKey = `${CACHE_KEY}_${currentContador}`;
+    const cachedData = loadFromCache(cacheKey);
+    
+    // ✅ FILTRA APENAS AS CÉLULAS DAS COLUNAS A, C E D
+    const cellsToSend = Object.entries(cachedData).filter(([range, value]) => {
+        return range.startsWith('A') || range.startsWith('C') || range.startsWith('D');
+    });
+    
+    if (cellsToSend.length === 0) {
+        showNotification('Nenhum dado no cache para enviar', 'info', 2000);
+        return;
+    }
+
+    showNotification(`Enviando ${cellsToSend.filter(([range]) => range.startsWith('A')).length} itens do ${currentContador}...`, 'loading');
+
+    try {
+        const updates = cellsToSend.map(([range, value]) => ({
+            range: range,
+            value: value
+        }));
+
+        const response = await fetch(`${BACKEND_URL}/api/batch-update-sheet`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({ 
+                sheet_name: currentContador,
+                updates: updates 
+            })
+        });
+
+        const result = await response.json();
+        hideNotification();
+
+        if (response.ok && !result.error) {
+            localStorage.removeItem(cacheKey);
+            pendingUpdates.clear();
+            editCount = 0;
+            updatePendingCount();
             
-            if (Object.keys(cachedData).length === 0) {
-                showNotification('Nenhum dado no cache para enviar', 'info', 2000);
-                return;
-            }
-
-            showNotification(`Enviando ${Object.keys(cachedData).filter(key => key.startsWith('A')).length} células do ${currentContador}...`, 'loading');
-
-            try {
-                const updates = Object.entries(cachedData).map(([range, value]) => ({
-                    range: range,
-                    value: value
-                }));
-
-                const response = await fetch(`${BACKEND_URL}/api/batch-update-sheet`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    credentials: 'include',
-                    body: JSON.stringify({ 
-                        sheet_name: currentContador,
-                        updates: updates 
-                    })
-                });
-
-                const result = await response.json();
-                hideNotification();
-
-                if (response.ok && !result.error) {
-                    localStorage.removeItem(cacheKey);
-                    pendingUpdates.clear();
-                    editCount = 0;
-                    updatePendingCount();
-                    
-                    lastCacheCount = 0;
-                    
-                    showNotification(`${result.processed || updates.length} células salvas no ${currentContador}!`, 'success', 3000);
-                } else {
-                    showNotification(`Erro: ${result.error}`, 'error');
-                }
-            } catch (error) {
-                hideNotification();
-                showNotification('Erro de rede', 'error');
-            }
+            lastCacheCount = 0;
+            
+            showNotification(`${result.processed || updates.length} células salvas no ${currentContador}!`, 'success', 3000);
+        } else {
+            showNotification(`Erro: ${result.error}`, 'error');
         }
-
+    } catch (error) {
+        hideNotification();
+        showNotification('Erro de rede', 'error');
+    }
+}
         /**
          * ⚡⚡⚡ FUNÇÃO CORRIGIDA: Força o envio do lote pendente
          */
@@ -5510,6 +5579,70 @@ function dividirEmPaginasPorAltura(elemento) {
 function getDataAtual() {
     const agora = new Date();
     return `${agora.getFullYear()}-${(agora.getMonth()+1).toString().padStart(2, '0')}-${agora.getDate().toString().padStart(2, '0')}_${agora.getHours().toString().padStart(2, '0')}-${agora.getMinutes().toString().padStart(2, '0')}`;
+}
+
+
+
+		/**
+ * ✅ AUMENTAR QUANTIDADE (máximo 1000)
+ */
+function aumentarQuantidade(element, sheetRangeD) {
+    const quantidadeSpan = element.parentElement.querySelector('.quantidade-valor');
+    let quantidade = parseInt(quantidadeSpan.textContent);
+    
+    if (isNaN(quantidade) || quantidade < 1) quantidade = 1;
+    
+    if (quantidade < 1000) {
+        quantidade++;
+        quantidadeSpan.textContent = quantidade;
+        
+        // Salva no cache
+        const cacheKey = `${CACHE_KEY}_${currentContador}`;
+        const cachedData = loadFromCache(cacheKey);
+        cachedData[sheetRangeD] = quantidade.toString();
+        saveToCache(cachedData, cacheKey);
+        
+        updatePendingCount();
+        
+        // Feedback visual
+        element.classList.add('bg-green-100');
+        setTimeout(() => element.classList.remove('bg-green-100'), 200);
+    } else {
+        // Feedback de limite máximo
+        element.classList.add('bg-red-100');
+        setTimeout(() => element.classList.remove('bg-red-100'), 300);
+    }
+}
+
+/**
+ * ✅ DIMINUIR QUANTIDADE (mínimo 1)
+ */
+function diminuirQuantidade(element, sheetRangeD) {
+    const quantidadeSpan = element.parentElement.querySelector('.quantidade-valor');
+    let quantidade = parseInt(quantidadeSpan.textContent);
+    
+    if (isNaN(quantidade) || quantidade < 1) quantidade = 1;
+    
+    if (quantidade > 1) {
+        quantidade--;
+        quantidadeSpan.textContent = quantidade;
+        
+        // Salva no cache
+        const cacheKey = `${CACHE_KEY}_${currentContador}`;
+        const cachedData = loadFromCache(cacheKey);
+        cachedData[sheetRangeD] = quantidade.toString();
+        saveToCache(cachedData, cacheKey);
+        
+        updatePendingCount();
+        
+        // Feedback visual
+        element.classList.add('bg-red-100');
+        setTimeout(() => element.classList.remove('bg-red-100'), 200);
+    } else {
+        // Feedback de limite mínimo
+        element.classList.add('bg-red-200');
+        setTimeout(() => element.classList.remove('bg-red-200'), 300);
+    }
 }
 		
     </script>
