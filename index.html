@@ -663,6 +663,38 @@ body {
     font-weight: bold;
     line-height: 1;
 }
+
+
+
+
+
+
+
+/* ✅ ESTILOS PARA A CÉLULA DE QUANTIDADE */
+.quantidade-cell {
+    text-align: center !important;
+    min-width: 60px !important;
+    max-width: 80px !important;
+    width: 70px !important;
+}
+
+/* Garantir que o conteúdo editável também fique centralizado */
+.quantidade-cell[contenteditable="true"]:focus {
+    text-align: center;
+    outline: none;
+    box-shadow: 0 0 0 2px #c7d2fe;
+}
+
+/* Para modo de impressão */
+@media print {
+    .quantidade-cell {
+        width: 40px !important;
+        text-align: center !important;
+    }
+}
+
+
+
 		   
 		   
 </style>
@@ -1659,7 +1691,7 @@ function realizarMudancaParaConferencia(sheetName) {
                 <thead class="bg-gray-50 sticky top-0">
                     <tr>
                         <th>Código de Barras</th>
-                        <th>Qtd</th> <!-- ✅ NOVA COLUNA -->
+                        <th>Qtd</th>
                         <th>Descrição</th>
                     </tr>
                 </thead>
@@ -1668,7 +1700,7 @@ function realizarMudancaParaConferencia(sheetName) {
     for (let rowIndex = 0; rowIndex < fixedRows; rowIndex++) {
         const sheetRowIndex = rowIndex + 1;
         const sheetRangeA = `A${sheetRowIndex}`;
-        const sheetRangeB = `B${sheetRowIndex}`; // ✅ NOVA
+        const sheetRangeB = `B${sheetRowIndex}`;
         const sheetRangeC = `C${sheetRowIndex}`;
         
         let cellValueA = '';
@@ -1678,7 +1710,7 @@ function realizarMudancaParaConferencia(sheetName) {
             cellValueA = existingData[rowIndex][0];
         }
         
-        // ✅ VALOR DA COLUNA B (QUANTIDADE)
+        // ✅ VALOR DA COLUNA B (QUANTIDADE) - EDITÁVEL
         let cellValueB = '';
         if (cachedData[sheetRangeB] !== undefined) {
             cellValueB = cachedData[sheetRangeB];
@@ -1696,18 +1728,26 @@ function realizarMudancaParaConferencia(sheetName) {
         const hasRedBackground = cellValueA !== '' && cellValueC === '';
         const rowClass = hasRedBackground ? 'bg-red-50' : '';
 
-        const editAttributes = `contenteditable="true"
+        const editAttributesA = `contenteditable="true"
                                 onblur="handleContagemCellEdit(this, '${sheetRangeA}', '${currentContador}')"
                                 onkeydown="handleContagemKeyPress(event, '${sheetRangeA}', '${currentContador}')"
                                 oninput="handleContagemCellInput(this)"
                                 data-original-value="${cellValueA}"
                                 data-sheet-range="${sheetRangeA}"`;
         
+        // ✅ ATRIBUTOS PARA CÉLULA B (QUANTIDADE) - EDITÁVEL
+        const editAttributesB = `contenteditable="true"
+                                onblur="handleQuantidadeCellEdit(this, '${sheetRangeB}', '${currentContador}')"
+                                onkeydown="handleQuantidadeKeyPress(event, '${sheetRangeB}', '${currentContador}')"
+                                data-original-value="${cellValueB}"
+                                data-sheet-range="${sheetRangeB}"`;
+        
         const cellClassesA = 'cursor-text hover:bg-indigo-50/50 focus:bg-indigo-100 border border-transparent focus:border-indigo-400 transition expand-mode-cell';
+        const cellClassesB = 'cursor-text hover:bg-indigo-50/50 focus:bg-indigo-100 border border-transparent focus:border-indigo-400 transition expand-mode-cell text-center w-20'; // ✅ w-20 para largura fixa
 
         html += `<tr data-row-index="${sheetRowIndex}" class="${rowClass}">
-                    <td ${editAttributes} onkeydown="handleContagemCellKeydown(event, this)" class="${cellClassesA}">${cellValueA}</td>
-                    <td class="quantidade-cell expand-mode-cell text-center" data-row-index="${sheetRowIndex}" data-sheet-range="${sheetRangeB}">${cellValueB}</td> <!-- ✅ NOVA CÉLULA -->
+                    <td ${editAttributesA} onkeydown="handleContagemCellKeydown(event, this)" class="${cellClassesA}">${cellValueA}</td>
+                    <td ${editAttributesB} class="${cellClassesB} quantidade-cell">${cellValueB}</td>
                     <td class="expand-mode-cell descricao-cell" data-row-index="${sheetRowIndex}" data-sheet-range="${sheetRangeC}">${cellValueC}</td>
                  </tr>`;
     }
@@ -2289,27 +2329,28 @@ function renderNotasFiscaisInfo(notasFiscaisInfo) {
     const cacheKey = `${CACHE_KEY}_${currentContador}`;
     const cachedData = loadFromCache(cacheKey);
     
-    // ✅ NOVO: Calcular a coluna B correspondente (A1 → B1)
-    const rowIndex = sheetRange.slice(1); // Extrai o número da linha
+    // ✅ Calcular a coluna B correspondente
+    const rowIndex = sheetRange.slice(1);
     const sheetRangeB = `B${rowIndex}`;
     
     if (newValue === '') {
         delete cachedData[sheetRange];
         const sheetRangeC = `C${rowIndex}`;
         delete cachedData[sheetRangeC];
-        delete cachedData[sheetRangeB]; // ✅ REMOVER também da coluna B
+        delete cachedData[sheetRangeB];
     } else {
         cachedData[sheetRange] = newValue;
         
-        // ✅ NOVO: ADICIONAR SEMPRE "1" NA COLUNA B QUANDO HOUVER CÓDIGO
+        // ✅ NOVO: ADICIONAR "1" NA COLUNA B APENAS SE ESTIVER VAZIA
         if (!cachedData[sheetRangeB] || cachedData[sheetRangeB] === '') {
             cachedData[sheetRangeB] = "1";
             
             // ✅ ATUALIZAR VISUALMENTE NO FRONTEND
             const row = element.closest('tr');
-            const cellB = row.querySelector('.quantidade-cell'); // Vamos criar esta classe
-            if (cellB) {
+            const cellB = row.querySelector('.quantidade-cell');
+            if (cellB && cellB.textContent.trim() === '') {
                 cellB.textContent = "1";
+                cellB.dataset.originalValue = "1";
             }
         }
         
@@ -2356,7 +2397,6 @@ function renderNotasFiscaisInfo(notasFiscaisInfo) {
         processBatchUpdate();
     }
 }
-
         /**
          * ⚡⚡⚡ FUNÇÃO CORRIGIDA: Processa atualização em lote - AGORA COM SUPORTE A MÚLTIPLOS CONTADORES
          */
@@ -5538,6 +5578,75 @@ function getDataAtual() {
     const agora = new Date();
     return `${agora.getFullYear()}-${(agora.getMonth()+1).toString().padStart(2, '0')}-${agora.getDate().toString().padStart(2, '0')}_${agora.getHours().toString().padStart(2, '0')}-${agora.getMinutes().toString().padStart(2, '0')}`;
 }
+
+
+
+
+
+
+/**
+ * ✅ NOVA FUNÇÃO: Manipula a edição da célula de quantidade (coluna B)
+ */
+function handleQuantidadeCellEdit(element, sheetRange, sheetName) {
+    const newValue = element.textContent.trim();
+    const originalValue = element.dataset.originalValue || '';
+
+    if (newValue === originalValue) {
+        return;
+    }
+
+    const cacheKey = `${CACHE_KEY}_${currentContador}`;
+    const cachedData = loadFromCache(cacheKey);
+    
+    if (newValue === '') {
+        delete cachedData[sheetRange];
+    } else {
+        // ✅ SALVA O VALOR NO CACHE (será enviado em lote)
+        cachedData[sheetRange] = newValue;
+    }
+    
+    saveToCache(cachedData, cacheKey);
+    element.dataset.originalValue = newValue;
+
+    // ✅ ATUALIZA CONTAGEM DE PENDÊNCIAS
+    updatePendingCount();
+    
+    // ✅ SE TIVER MUITAS ALTERAÇÕES, ENVIA EM LOTE
+    if (editCount >= BATCH_SIZE) {
+        processBatchUpdate();
+    }
+}
+
+/**
+ * ✅ NOVA FUNÇÃO: Manipula teclas na célula de quantidade
+ */
+function handleQuantidadeKeyPress(event, sheetRange, sheetName) {
+    if (event.keyCode === 13) { // Enter
+        event.preventDefault();
+        
+        const element = event.target;
+        handleQuantidadeCellEdit(element, sheetRange, sheetName);
+        
+        // ✅ FOCA NA PRÓXIMA CÉLULA (CÓDIGO DE BARRAS)
+        const currentRow = parseInt(sheetRange.slice(1));
+        const nextRow = currentRow + 1;
+        const nextRange = `A${nextRow}`;
+        const nextCell = document.querySelector(`td[data-sheet-range="${nextRange}"]`);
+        
+        if (nextCell) {
+            nextCell.focus();
+            moveCursorToEnd(nextCell);
+            nextCell.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+    }
+    
+    // ✅ PERMITE APENAS NÚMEROS
+    if (!/[0-9]|Backspace|Delete|ArrowLeft|ArrowRight|Tab/.test(event.key)) {
+        event.preventDefault();
+    }
+}
+
+		
 		
     </script>
 </body>
