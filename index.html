@@ -1562,7 +1562,7 @@ function renderContagemLojaLayout() {
                     <p class="text-yellow-600 text-sm mt-1">Dados salvos localmente (atualização em lote)</p>
                     <p class="text-yellow-600 text-xs mt-1">Quantidade padrão: 1 - Use +/- para ajustar</p>
                 </div>
-                <button onclick="forceBatchUpdate()" class="flex items-center space-x-2 px-4 py-2 bg-blue-100 text-blue-700 rounded-lg shadow-sm hover:bg-blue-200 transition duration-150 text-sm font-medium border border-blue-300">
+                <button onclick="processBatchUpdateWithQuantities()" class="flex items-center space-x-2 px-4 py-2 bg-blue-100 text-blue-700 rounded-lg shadow-sm hover:bg-blue-200 transition duration-150 text-sm font-medium border border-blue-300">
                     <span>Forçar Envio</span>
                     <span id="pending-count" class="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs">0</span>
                 </button>
@@ -1730,19 +1730,21 @@ function renderContagemTableFixedRows(data, headers) {
         html += `<tr data-row-index="${sheetRowIndex}" class="${rowClass}">
                     <td ${editAttributes} onkeydown="handleContagemCellKeydown(event, this)" class="${cellClassesA}">${cellValueA}</td>
                     <td class="expand-mode-cell descricao-cell" data-row-index="${sheetRowIndex}" data-sheet-range="${sheetRangeC}">${cellValueC}</td>
-                    <td class="text-center expand-mode-cell quantidade-cell" data-row-index="${sheetRowIndex}" data-sheet-range="${sheetRangeD}">
-                        <div class="flex items-center justify-center gap-1">
-                            <button onclick="diminuirQuantidade(this, '${sheetRangeD}')" 
-                                    class="w-6 h-6 flex items-center justify-center bg-gray-200 rounded hover:bg-gray-300 transition duration-150 text-sm font-bold">
-                                -
-                            </button>
-                            <span class="quantidade-valor min-w-6 text-center font-medium">${quantidade}</span>
-                            <button onclick="aumentarQuantidade(this, '${sheetRangeD}')" 
-                                    class="w-6 h-6 flex items-center justify-center bg-gray-200 rounded hover:bg-gray-300 transition duration-150 text-sm font-bold">
-                                +
-                            </button>
-                        </div>
-                    </td>
+                    ${cellValueA !== '' ? `
+<td class="text-center expand-mode-cell quantidade-cell" data-row-index="${sheetRowIndex}" data-sheet-range="${sheetRangeD}">
+    <div class="flex items-center justify-center gap-1">
+        <button onclick="diminuirQuantidade(this, '${sheetRangeD}')" 
+                class="w-6 h-6 flex items-center justify-center bg-gray-200 rounded hover:bg-gray-300 transition duration-150 text-sm font-bold">
+            -
+        </button>
+        <span class="quantidade-valor min-w-6 text-center font-medium">${quantidade}</span>
+        <button onclick="aumentarQuantidade(this, '${sheetRangeD}')" 
+                class="w-6 h-6 flex items-center justify-center bg-gray-200 rounded hover:bg-gray-300 transition duration-150 text-sm font-bold">
+            +
+        </button>
+    </div>
+</td>
+` : '<td></td>'}
                  </tr>`;
     }
 
@@ -2295,20 +2297,37 @@ function renderNotasFiscaisInfo(notasFiscaisInfo) {
         }
 
         /**
-         * Atualiza o contador de pendências na interface
-         */
-        function updatePendingCount() {
-            const countElement = document.getElementById('pending-count');
-            if (countElement) {
-                const cacheKey = `${CACHE_KEY}_${currentContador}`;
-                const cachedData = loadFromCache(cacheKey);
+ * Atualiza o contador de pendências na interface
+ * ✅ AGORA CONTA: (CÓDIGOS DE BARRAS × QUANTIDADE)
+ */
+function updatePendingCount() {
+    const countElement = document.getElementById('pending-count');
+    if (countElement) {
+        const cacheKey = `${CACHE_KEY}_${currentContador}`;
+        const cachedData = loadFromCache(cacheKey);
+        
+        // ✅ ANTES: Contava apenas códigos de barras únicos
+        // const colunaACount = Object.keys(cachedData).filter(key => key.startsWith('A')).length;
+        
+        // ✅ AGORA: Soma todas as quantidades
+        let totalQuantidades = 0;
+        
+        // Para cada código de barras (coluna A)
+        Object.keys(cachedData).forEach(key => {
+            if (key.startsWith('A')) {
+                const rowIndex = key.slice(1); // Pega o número da linha (ex: "A123" → "123")
+                const quantidadeKey = `D${rowIndex}`; // Coluna D tem a quantidade
+                const quantidade = parseInt(cachedData[quantidadeKey]) || 1; // Default 1 se não existir
                 
-                const colunaACount = Object.keys(cachedData).filter(key => key.startsWith('A')).length;
-                countElement.textContent = colunaACount;
-                
-                checkCacheChange();
+                totalQuantidades += quantidade;
             }
-        }
+        });
+        
+        countElement.textContent = totalQuantidades;
+        
+        checkCacheChange();
+    }
+}
 
         /**
  * Manipula a edição de células na Contagem Loja (com cache)
@@ -5585,6 +5604,7 @@ function getDataAtual() {
 
 		/**
  * ✅ AUMENTAR QUANTIDADE (máximo 1000)
+ * ✅ AGORA ATUALIZA O CONTADOR DE PENDÊNCIAS
  */
 function aumentarQuantidade(element, sheetRangeD) {
     const quantidadeSpan = element.parentElement.querySelector('.quantidade-valor');
@@ -5602,6 +5622,7 @@ function aumentarQuantidade(element, sheetRangeD) {
         cachedData[sheetRangeD] = quantidade.toString();
         saveToCache(cachedData, cacheKey);
         
+        // ✅ ATUALIZA O CONTADOR DE PENDÊNCIAS
         updatePendingCount();
         
         // Feedback visual
@@ -5616,6 +5637,7 @@ function aumentarQuantidade(element, sheetRangeD) {
 
 /**
  * ✅ DIMINUIR QUANTIDADE (mínimo 1)
+ * ✅ AGORA ATUALIZA O CONTADOR DE PENDÊNCIAS
  */
 function diminuirQuantidade(element, sheetRangeD) {
     const quantidadeSpan = element.parentElement.querySelector('.quantidade-valor');
@@ -5633,6 +5655,7 @@ function diminuirQuantidade(element, sheetRangeD) {
         cachedData[sheetRangeD] = quantidade.toString();
         saveToCache(cachedData, cacheKey);
         
+        // ✅ ATUALIZA O CONTADOR DE PENDÊNCIAS
         updatePendingCount();
         
         // Feedback visual
@@ -5644,6 +5667,103 @@ function diminuirQuantidade(element, sheetRangeD) {
         setTimeout(() => element.classList.remove('bg-red-200'), 300);
     }
 }
+
+
+
+
+/**
+ * ⚡⚡⚡ FUNÇÃO ALTERNATIVA: Envia múltiplas linhas para o backend
+ */
+async function processBatchUpdateWithQuantities() {
+    const cacheKey = `${CACHE_KEY}_${currentContador}`;
+    const cachedData = loadFromCache(cacheKey);
+    
+    if (Object.keys(cachedData).length === 0) {
+        showNotification('Nenhum dado no cache para enviar', 'info', 2000);
+        return;
+    }
+
+    // ✅ PROCURA A ÚLTIMA LINHA PREENCHIDA NA PLANILHA
+    const ultimaLinhaResponse = await fetch(`${BACKEND_URL}/api/get-last-row`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ 
+            sheet_name: currentContador 
+        })
+    });
+    
+    const ultimaLinhaResult = await ultimaLinhaResponse.json();
+    let proximaLinha = ultimaLinhaResult.last_row || 1;
+    
+    if (proximaLinha < 1) proximaLinha = 1;
+
+    // ✅ PREPARA OS DADOS REPETINDO CONFORME QUANTIDADE
+    const updates = [];
+    
+    Object.keys(cachedData).forEach(key => {
+        if (key.startsWith('A')) {
+            const linha = key.slice(1);
+            const codigo = cachedData[key];
+            const descKey = `C${linha}`;
+            const qtdKey = `D${linha}`;
+            
+            const descricao = cachedData[descKey] || '';
+            const quantidade = parseInt(cachedData[qtdKey]) || 1;
+            
+            // Para cada unidade
+            for (let i = 0; i < quantidade; i++) {
+                const novaRangeA = `A${proximaLinha}`;
+                const novaRangeC = `C${proximaLinha}`;
+                
+                updates.push({ range: novaRangeA, value: codigo });
+                updates.push({ range: novaRangeC, value: descricao });
+                
+                proximaLinha++;
+            }
+        }
+    });
+    
+    if (updates.length === 0) {
+        showNotification('Nenhum dado válido para enviar', 'info', 2000);
+        return;
+    }
+
+    showNotification(`Enviando ${updates.length / 2} itens (com quantidades)...`, 'loading');
+
+    try {
+        const response = await fetch(`${BACKEND_URL}/api/batch-update-sheet`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({ 
+                sheet_name: currentContador,
+                updates: updates
+            })
+        });
+
+        const result = await response.json();
+        hideNotification();
+
+        if (response.ok && !result.error) {
+            localStorage.removeItem(cacheKey);
+            pendingUpdates.clear();
+            editCount = 0;
+            updatePendingCount();
+            
+            lastCacheCount = 0;
+            
+            showNotification(`${updates.length / 2} itens salvos no ${currentContador}!`, 'success', 3000);
+        } else {
+            showNotification(`Erro: ${result.error}`, 'error');
+        }
+    } catch (error) {
+        hideNotification();
+        showNotification('Erro de rede', 'error');
+    }
+}
+
+		
 		
     </script>
 </body>
