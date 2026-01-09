@@ -1664,8 +1664,9 @@ function renderContagemLojaLayout() {
             window.print();
         }
 
-        /**
- * Renderiza a tabela da Contagem Loja com 3000 linhas pré-renderizadas e AGORA 3 COLUNAS.
+     /**
+ * Renderiza a tabela da Contagem Loja com 3000 linhas pré-renderizadas e 3 COLUNAS.
+ * COLUNAS: A = Código de Barras, B = Quantidade, C = Descrição
  */
 function renderContagemTableFixedRows(data, headers) {
     const fixedRows = 3000;
@@ -1683,8 +1684,8 @@ function renderContagemTableFixedRows(data, headers) {
                 <thead class="bg-gray-50 sticky top-0">
                     <tr>
                         <th>Código de Barras</th>
-                        <th>Descrição</th>
                         <th>Quantidade</th>
+                        <th>Descrição</th>
                     </tr>
                 </thead>
                 <tbody>`;
@@ -1692,6 +1693,7 @@ function renderContagemTableFixedRows(data, headers) {
     for (let rowIndex = 0; rowIndex < fixedRows; rowIndex++) {
         const sheetRowIndex = rowIndex + 1;
         const sheetRangeA = `A${sheetRowIndex}`;
+        const sheetRangeB = `B${sheetRowIndex}`;
         const sheetRangeC = `C${sheetRowIndex}`;
         
         let cellValueA = '';
@@ -1701,18 +1703,18 @@ function renderContagemTableFixedRows(data, headers) {
             cellValueA = existingData[rowIndex][0];
         }
         
+        let cellValueB = '1'; // Quantidade padrão
+        if (cachedData[sheetRangeB] !== undefined) {
+            cellValueB = cachedData[sheetRangeB];
+        } else if (existingData[rowIndex] && existingData[rowIndex][1] !== undefined) {
+            cellValueB = existingData[rowIndex][1];
+        }
+        
         let cellValueC = '';
         if (cachedData[sheetRangeC] !== undefined) {
             cellValueC = cachedData[sheetRangeC];
         } else if (existingData[rowIndex] && existingData[rowIndex][2] !== undefined) {
             cellValueC = existingData[rowIndex][2];
-        }
-
-        // ✅ Buscar quantidade do cache (coluna D)
-        const sheetRangeD = `D${sheetRowIndex}`;
-        let quantidade = '1'; // Valor padrão
-        if (cachedData[sheetRangeD] !== undefined) {
-            quantidade = cachedData[sheetRangeD];
         }
 
         const hasRedBackground = cellValueA !== '' && cellValueC === '';
@@ -1729,22 +1731,22 @@ function renderContagemTableFixedRows(data, headers) {
 
         html += `<tr data-row-index="${sheetRowIndex}" class="${rowClass}">
                     <td ${editAttributes} onkeydown="handleContagemCellKeydown(event, this)" class="${cellClassesA}">${cellValueA}</td>
+                    <td class="text-center expand-mode-cell quantidade-cell" data-row-index="${sheetRowIndex}" data-sheet-range="${sheetRangeB}">
+                        ${cellValueA !== '' ? `
+                        <div class="flex items-center justify-center gap-1">
+                            <button onclick="diminuirQuantidade(this, '${sheetRangeB}')" 
+                                    class="w-6 h-6 flex items-center justify-center bg-gray-200 rounded hover:bg-gray-300 transition duration-150 text-sm font-bold">
+                                -
+                            </button>
+                            <span class="quantidade-valor min-w-6 text-center font-medium">${cellValueB}</span>
+                            <button onclick="aumentarQuantidade(this, '${sheetRangeB}')" 
+                                    class="w-6 h-6 flex items-center justify-center bg-gray-200 rounded hover:bg-gray-300 transition duration-150 text-sm font-bold">
+                                +
+                            </button>
+                        </div>
+                        ` : ''}
+                    </td>
                     <td class="expand-mode-cell descricao-cell" data-row-index="${sheetRowIndex}" data-sheet-range="${sheetRangeC}">${cellValueC}</td>
-                    ${cellValueA !== '' ? `
-<td class="text-center expand-mode-cell quantidade-cell" data-row-index="${sheetRowIndex}" data-sheet-range="${sheetRangeD}">
-    <div class="flex items-center justify-center gap-1">
-        <button onclick="diminuirQuantidade(this, '${sheetRangeD}')" 
-                class="w-6 h-6 flex items-center justify-center bg-gray-200 rounded hover:bg-gray-300 transition duration-150 text-sm font-bold">
-            -
-        </button>
-        <span class="quantidade-valor min-w-6 text-center font-medium">${quantidade}</span>
-        <button onclick="aumentarQuantidade(this, '${sheetRangeD}')" 
-                class="w-6 h-6 flex items-center justify-center bg-gray-200 rounded hover:bg-gray-300 transition duration-150 text-sm font-bold">
-            +
-        </button>
-    </div>
-</td>
-` : '<td></td>'}
                  </tr>`;
     }
 
@@ -1936,7 +1938,7 @@ if (isConferencia && i === 5) { // Coluna "Corrigir"
         }
 
     } else if (sheetName === "CONTAGEM LOJA") {
-    headers = ["Código de Barras", "Descrição", "Quantidade"]; // ✅ AGORA 3 COLUNAS
+    headers = ["Código de Barras", "Quantidade", "Descrição"]; // ✅ ORDEM: A, B, C
     targetElementId = 'dynamic-table-content-contagem';
     
     setTimeout(() => {
@@ -2296,9 +2298,9 @@ function renderNotasFiscaisInfo(notasFiscaisInfo) {
             }
         }
 
-        /**
+    /**
  * Atualiza o contador de pendências na interface
- * ✅ AGORA CONTA: (CÓDIGOS DE BARRAS × QUANTIDADE)
+ * ✅ AGORA CONTA: (CÓDIGOS DE BARRAS × QUANTIDADE DA COLUNA B)
  */
 function updatePendingCount() {
     const countElement = document.getElementById('pending-count');
@@ -2306,18 +2308,13 @@ function updatePendingCount() {
         const cacheKey = `${CACHE_KEY}_${currentContador}`;
         const cachedData = loadFromCache(cacheKey);
         
-        // ✅ ANTES: Contava apenas códigos de barras únicos
-        // const colunaACount = Object.keys(cachedData).filter(key => key.startsWith('A')).length;
-        
-        // ✅ AGORA: Soma todas as quantidades
         let totalQuantidades = 0;
         
-        // Para cada código de barras (coluna A)
         Object.keys(cachedData).forEach(key => {
             if (key.startsWith('A')) {
-                const rowIndex = key.slice(1); // Pega o número da linha (ex: "A123" → "123")
-                const quantidadeKey = `D${rowIndex}`; // Coluna D tem a quantidade
-                const quantidade = parseInt(cachedData[quantidadeKey]) || 1; // Default 1 se não existir
+                const rowIndex = key.slice(1);
+                const quantidadeKey = `B${rowIndex}`;
+                const quantidade = parseInt(cachedData[quantidadeKey]) || 1;
                 
                 totalQuantidades += quantidade;
             }
@@ -2331,7 +2328,7 @@ function updatePendingCount() {
 
         /**
  * Manipula a edição de células na Contagem Loja (com cache)
- * ✅ AGORA TAMBÉM INICIALIZA QUANTIDADE COMO 1
+ * ✅ AGORA USA COLUNA B PARA QUANTIDADE
  */
 function handleContagemCellEdit(element, sheetRange, sheetName) {
     const newValue = element.textContent.trim();
@@ -2347,27 +2344,20 @@ function handleContagemCellEdit(element, sheetRange, sheetName) {
     if (newValue === '') {
         delete cachedData[sheetRange];
         const rowIndex = sheetRange.slice(1);
+        const sheetRangeB = `B${rowIndex}`;
+        delete cachedData[sheetRangeB];
         const sheetRangeC = `C${rowIndex}`;
         delete cachedData[sheetRangeC];
-        const sheetRangeD = `D${rowIndex}`;
-        delete cachedData[sheetRangeD]; // Remove quantidade também
+        
     } else {
         cachedData[sheetRange] = newValue;
         
-        // ✅ INICIALIZA QUANTIDADE COMO 1 SE FOR NOVO CÓDIGO DE BARRAS
+        // ✅ INICIALIZA QUANTIDADE COMO 1 NA COLUNA B SE FOR NOVO CÓDIGO
         const rowIndex = sheetRange.slice(1);
-        const sheetRangeD = `D${rowIndex}`;
+        const sheetRangeB = `B${rowIndex}`;
         
-        // Se não existe quantidade definida ainda, define como 1
-        if (cachedData[sheetRangeD] === undefined) {
-            cachedData[sheetRangeD] = '1';
-            
-            // Atualiza visualmente na tabela
-            const row = element.closest('tr');
-            const quantidadeCell = row.querySelector('.quantidade-cell .quantidade-valor');
-            if (quantidadeCell) {
-                quantidadeCell.textContent = '1';
-            }
+        if (cachedData[sheetRangeB] === undefined) {
+            cachedData[sheetRangeB] = '1';
         }
         
         const descricao = buscarDescricaoPorCodigo(newValue);
@@ -2414,27 +2404,22 @@ function handleContagemCellEdit(element, sheetRange, sheetName) {
     }
 }
         /**
- * ⚡⚡⚡ FUNÇÃO CORRIGIDA: Processa atualização em lote - AGORA COM SUPORTE A MÚLTIPLOS CONTADORES
- * ✅ AGORA ENVIA TAMBÉM A COLUNA D (QUANTIDADE)
+ * ⚡⚡⚡ FUNÇÃO CORRIGIDA: Processa atualização em lote
+ * ✅ AGORA ENVIA COLUNAS A, B, C (B = QUANTIDADE)
  */
 async function processBatchUpdate() {
     const cacheKey = `${CACHE_KEY}_${currentContador}`;
     const cachedData = loadFromCache(cacheKey);
     
-    // ✅ FILTRA APENAS AS CÉLULAS DAS COLUNAS A, C E D
-    const cellsToSend = Object.entries(cachedData).filter(([range, value]) => {
-        return range.startsWith('A') || range.startsWith('C') || range.startsWith('D');
-    });
-    
-    if (cellsToSend.length === 0) {
+    if (Object.keys(cachedData).length === 0) {
         showNotification('Nenhum dado no cache para enviar', 'info', 2000);
         return;
     }
 
-    showNotification(`Enviando ${cellsToSend.filter(([range]) => range.startsWith('A')).length} itens do ${currentContador}...`, 'loading');
+    showNotification(`Enviando dados do ${currentContador}...`, 'loading');
 
     try {
-        const updates = cellsToSend.map(([range, value]) => ({
+        const updates = Object.entries(cachedData).map(([range, value]) => ({
             range: range,
             value: value
         }));
@@ -5603,10 +5588,9 @@ function getDataAtual() {
 
 
 		/**
- * ✅ AUMENTAR QUANTIDADE (máximo 1000)
- * ✅ AGORA ATUALIZA O CONTADOR DE PENDÊNCIAS
+ * ✅ AUMENTAR QUANTIDADE (máximo 1000) - COLUNA B
  */
-function aumentarQuantidade(element, sheetRangeD) {
+function aumentarQuantidade(element, sheetRangeB) {
     const quantidadeSpan = element.parentElement.querySelector('.quantidade-valor');
     let quantidade = parseInt(quantidadeSpan.textContent);
     
@@ -5616,30 +5600,24 @@ function aumentarQuantidade(element, sheetRangeD) {
         quantidade++;
         quantidadeSpan.textContent = quantidade;
         
-        // Salva no cache
         const cacheKey = `${CACHE_KEY}_${currentContador}`;
         const cachedData = loadFromCache(cacheKey);
-        cachedData[sheetRangeD] = quantidade.toString();
+        cachedData[sheetRangeB] = quantidade.toString();
         saveToCache(cachedData, cacheKey);
         
-        // ✅ ATUALIZA O CONTADOR DE PENDÊNCIAS
         updatePendingCount();
         
-        // Feedback visual
         element.classList.add('bg-green-100');
         setTimeout(() => element.classList.remove('bg-green-100'), 200);
     } else {
-        // Feedback de limite máximo
         element.classList.add('bg-red-100');
         setTimeout(() => element.classList.remove('bg-red-100'), 300);
     }
 }
-
 /**
- * ✅ DIMINUIR QUANTIDADE (mínimo 1)
- * ✅ AGORA ATUALIZA O CONTADOR DE PENDÊNCIAS
+ * ✅ DIMINUIR QUANTIDADE (mínimo 1) - COLUNA B
  */
-function diminuirQuantidade(element, sheetRangeD) {
+function diminuirQuantidade(element, sheetRangeB) {
     const quantidadeSpan = element.parentElement.querySelector('.quantidade-valor');
     let quantidade = parseInt(quantidadeSpan.textContent);
     
@@ -5649,20 +5627,16 @@ function diminuirQuantidade(element, sheetRangeD) {
         quantidade--;
         quantidadeSpan.textContent = quantidade;
         
-        // Salva no cache
         const cacheKey = `${CACHE_KEY}_${currentContador}`;
         const cachedData = loadFromCache(cacheKey);
-        cachedData[sheetRangeD] = quantidade.toString();
+        cachedData[sheetRangeB] = quantidade.toString();
         saveToCache(cachedData, cacheKey);
         
-        // ✅ ATUALIZA O CONTADOR DE PENDÊNCIAS
         updatePendingCount();
         
-        // Feedback visual
         element.classList.add('bg-red-100');
         setTimeout(() => element.classList.remove('bg-red-100'), 200);
     } else {
-        // Feedback de limite mínimo
         element.classList.add('bg-red-200');
         setTimeout(() => element.classList.remove('bg-red-200'), 300);
     }
