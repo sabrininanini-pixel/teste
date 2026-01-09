@@ -1690,9 +1690,9 @@ function realizarMudancaParaConferencia(sheetName) {
             <table class="mock-table w-full text-sm" id="contagem-table">
                 <thead class="bg-gray-50 sticky top-0">
                     <tr>
-                        <th>Código de Barras</th>
-                        <th>Qtd</th>
-                        <th>Descrição</th>
+                        <th class="text-left">Código de Barras</th>
+                        <th class="text-center">Qtd</th>
+                        <th class="text-left">Descrição</th>
                     </tr>
                 </thead>
                 <tbody>`;
@@ -1710,7 +1710,6 @@ function realizarMudancaParaConferencia(sheetName) {
             cellValueA = existingData[rowIndex][0];
         }
         
-        // ✅ VALOR DA COLUNA B (QUANTIDADE) - EDITÁVEL
         let cellValueB = '';
         if (cachedData[sheetRangeB] !== undefined) {
             cellValueB = cachedData[sheetRangeB];
@@ -1735,23 +1734,22 @@ function realizarMudancaParaConferencia(sheetName) {
                                 data-original-value="${cellValueA}"
                                 data-sheet-range="${sheetRangeA}"`;
         
-        // ✅ ATRIBUTOS PARA CÉLULA B (QUANTIDADE) - EDITÁVEL
         const editAttributesB = `contenteditable="true"
                                 onblur="handleQuantidadeCellEdit(this, '${sheetRangeB}', '${currentContador}')"
                                 onkeydown="handleQuantidadeKeyPress(event, '${sheetRangeB}', '${currentContador}')"
                                 data-original-value="${cellValueB}"
                                 data-sheet-range="${sheetRangeB}"`;
         
-        const cellClassesA = 'cursor-text hover:bg-indigo-50/50 focus:bg-indigo-100 border border-transparent focus:border-indigo-400 transition expand-mode-cell';
-        const cellClassesB = 'cursor-text hover:bg-indigo-50/50 focus:bg-indigo-100 border border-transparent focus:border-indigo-400 transition expand-mode-cell text-center w-20'; // ✅ w-20 para largura fixa
+        const cellClassesA = 'cursor-text hover:bg-indigo-50/50 focus:bg-indigo-100 border border-transparent focus:border-indigo-400 transition expand-mode-cell text-left';
+        const cellClassesB = 'cursor-text hover:bg-indigo-50/50 focus:bg-indigo-100 border border-transparent focus:border-indigo-400 transition w-20 text-center quantidade-cell';
 
         html += `<tr data-row-index="${sheetRowIndex}" class="${rowClass}">
-            <td ${editAttributesA} onkeydown="handleContagemCellKeydown(event, this)" class="${cellClassesA}">${cellValueA}</td>
-            <td ${editAttributesB} class="${cellClassesB} quantidade-cell">
-                <div style="width: 100%; text-align: center;">${cellValueB}</div>
-            </td>
-            <td class="expand-mode-cell descricao-cell" data-row-index="${sheetRowIndex}" data-sheet-range="${sheetRangeC}">${cellValueC}</td>
-         </tr>`;
+                    <td ${editAttributesA} onkeydown="handleContagemCellKeydown(event, this)" class="${cellClassesA}">${cellValueA}</td>
+                    <td ${editAttributesB} class="${cellClassesB}">
+                        <div class="flex items-center justify-center h-full w-full">${cellValueB}</div>
+                    </td>
+                    <td class="expand-mode-cell descricao-cell text-left" data-row-index="${sheetRowIndex}" data-sheet-range="${sheetRangeC}">${cellValueC}</td>
+                 </tr>`;
     }
 
     html += `</tbody></table></div>`;
