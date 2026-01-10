@@ -740,7 +740,7 @@ body {
 .botao-grande {
     width: 32px !important;
     height: 32px !important;
-    font-size: 20px !important;
+    font-size: 16px !important;
     font-weight: 500 !important;
 }
 
@@ -1854,10 +1854,11 @@ function realizarMudancaParaConferencia(sheetName) {
             quantidadeHtml = `<td class="${cellClassesB}" style="width: 140px;">
                                 <div class="flex items-center justify-center gap-1 w-full" style="height: 40px;">
      <button onclick="alterarQuantidade(this, -10, '${sheetRangeB}', '${currentContador}')" 
-            class="w-8 h-8 flex items-center justify-center text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded transition duration-150 text-sm"
-            title="Diminuir 10">
-        --
-    </button>
+        class="botao-quantidade botao-grande"
+        style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; color: #6b7280; border-radius: 4px; transition: all 0.15s; background: transparent; border: none; cursor: pointer; font-size: 14px; font-weight: 500;"
+        title="Diminuir 10">
+    -
+</button>
     <button onclick="alterarQuantidade(this, -1, '${sheetRangeB}', '${currentContador}')" 
             class="w-4 h-4 flex items-center justify-center text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded transition duration-150 text-sm"
             title="Diminuir 1">
@@ -5899,10 +5900,11 @@ function atualizarCelulaQuantidade(rowElement, sheetRangeB, valor = "1") {
             cellB.innerHTML = `
                 <div class="flex items-center justify-center gap-1 w-full" style="height: 40px;">
         <button onclick="alterarQuantidade(this, -10, '${sheetRangeB}', '${currentContador}')" 
-            class="w-8 h-8 flex items-center justify-center text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded transition duration-150 text-sm"
-            title="Diminuir 10">
-        --
-    </button>
+        class="botao-quantidade botao-grande"
+        style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; color: #6b7280; border-radius: 4px; transition: all 0.15s; background: transparent; border: none; cursor: pointer; font-size: 14px; font-weight: 500;"
+        title="Diminuir 10">
+    -
+</button>
         <button onclick="alterarQuantidade(this, -1, '${sheetRangeB}', '${currentContador}')" 
                 class="w-5 h-5 flex items-center justify-center text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded transition duration-150 text-sm"
                 title="Diminuir 1">
