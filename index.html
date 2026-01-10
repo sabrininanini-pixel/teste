@@ -704,6 +704,28 @@ body {
 
 
 
+
+
+
+
+
+
+
+
+
+
+		   if (!cachedData[sheetRangeB] || cachedData[sheetRangeB] === '') {
+    cachedData[sheetRangeB] = "1";
+    
+    const row = element.closest('tr');
+    const valorElement = row.querySelector('.quantidade-valor');
+    if (valorElement) {
+        valorElement.textContent = "1";
+        valorElement.dataset.originalValue = "1";
+    }
+}
+
+
 		   
 		   
 </style>
@@ -1754,8 +1776,25 @@ function realizarMudancaParaConferencia(sheetName) {
 
         html += `<tr data-row-index="${sheetRowIndex}" class="${rowClass}">
                     <td ${editAttributesA} onkeydown="handleContagemCellKeydown(event, this)" class="${cellClassesA}">${cellValueA}</td>
-                    <td ${editAttributesB} class="${cellClassesB} quantidade-cell">
-    <div class="quantidade-conteudo" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; text-align: center;">${cellValueB}</div>
+                    <td class="${cellClassesB} quantidade-cell">
+    <div style="display: flex; align-items: center; justify-content: center; gap: 4px; width: 100%;">
+        <button onclick="alterarQuantidade(this, -1, '${sheetRangeB}', '${currentContador}')" 
+                class="w-6 h-6 flex items-center justify-center bg-gray-200 rounded hover:bg-gray-300 text-sm font-bold">
+            -
+        </button>
+        <div class="quantidade-valor" contenteditable="true"
+             onblur="atualizarQuantidadeManual(this, '${sheetRangeB}', '${currentContador}')"
+             onkeydown="validarTeclaQuantidade(event)"
+             style="min-width: 30px; text-align: center; padding: 2px 4px; border: 1px solid transparent; border-radius: 4px; cursor: text;"
+             data-sheet-range="${sheetRangeB}"
+             data-original-value="${cellValueB}">
+             ${cellValueB || '1'}
+        </div>
+        <button onclick="alterarQuantidade(this, 1, '${sheetRangeB}', '${currentContador}')" 
+                class="w-6 h-6 flex items-center justify-center bg-gray-200 rounded hover:bg-gray-300 text-sm font-bold">
+            +
+        </button>
+    </div>
 </td>
                     <td class="expand-mode-cell descricao-cell text-left" data-row-index="${sheetRowIndex}" data-sheet-range="${sheetRangeC}">${cellValueC}</td>
                  </tr>`;
@@ -2363,20 +2402,15 @@ function renderNotasFiscaisInfo(notasFiscaisInfo) {
         cachedData[sheetRange] = newValue;
         
         if (!cachedData[sheetRangeB] || cachedData[sheetRangeB] === '') {
-            cachedData[sheetRangeB] = "1";
-            
-            const row = element.closest('tr');
-            const cellB = row.querySelector('.quantidade-cell');
-            if (cellB) {
-                const conteudoDiv = cellB.querySelector('.quantidade-conteudo');
-                if (conteudoDiv) {
-                    conteudoDiv.textContent = "1";
-                } else {
-                    cellB.innerHTML = `<div class="quantidade-conteudo" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; text-align: center;">1</div>`;
-                }
-                cellB.dataset.originalValue = "1";
-            }
-        }
+    cachedData[sheetRangeB] = "1";
+    
+    const row = element.closest('tr');
+    const valorElement = row.querySelector('.quantidade-valor');
+    if (valorElement) {
+        valorElement.textContent = "1";
+        valorElement.dataset.originalValue = "1";
+    }
+}
         
         const descricao = buscarDescricaoPorCodigo(newValue);
         const row = element.closest('tr');
@@ -5672,6 +5706,97 @@ function handleQuantidadeKeyPress(event, sheetRange, sheetName) {
     }
 }
 
+
+
+
+/**
+ * ✅ FUNÇÃO: Alterar quantidade com botões +/-
+ */
+function alterarQuantidade(botao, mudanca, sheetRange, sheetName) {
+    const container = botao.closest('div');
+    const valorElement = container.querySelector('.quantidade-valor');
+    
+    // Pega o valor atual
+    let valorAtual = parseInt(valorElement.textContent.trim()) || 1;
+    
+    // Calcula novo valor (mínimo 1)
+    let novoValor = valorAtual + mudanca;
+    if (novoValor < 1) novoValor = 1;
+    
+    // Atualiza visualmente
+    valorElement.textContent = novoValor;
+    
+    // Salva no cache
+    salvarQuantidadeNoCache(sheetRange, novoValor.toString(), sheetName);
+    
+    // Atualiza o data-original-value
+    valorElement.dataset.originalValue = novoValor.toString();
+}
+
+/**
+ * ✅ FUNÇÃO: Atualizar quantidade manualmente (digitação)
+ */
+function atualizarQuantidadeManual(element, sheetRange, sheetName) {
+    const novoValor = element.textContent.trim();
+    
+    // Valida se é número e mínimo 1
+    if (novoValor === '' || isNaN(novoValor) || parseInt(novoValor) < 1) {
+        element.textContent = '1';
+        salvarQuantidadeNoCache(sheetRange, '1', sheetName);
+        element.dataset.originalValue = '1';
+    } else {
+        // Remove zeros à esquerda
+        const valorNumerico = parseInt(novoValor).toString();
+        element.textContent = valorNumerico;
+        salvarQuantidadeNoCache(sheetRange, valorNumerico, sheetName);
+        element.dataset.originalValue = valorNumerico;
+    }
+}
+
+/**
+ * ✅ FUNÇÃO: Validar teclas durante a digitação
+ */
+function validarTeclaQuantidade(event) {
+    // Permite: números, backspace, delete, setas, tab, enter
+    const teclasPermitidas = /[0-9]|Backspace|Delete|ArrowLeft|ArrowRight|Tab|Enter/;
+    
+    if (!teclasPermitidas.test(event.key)) {
+        event.preventDefault();
+        return;
+    }
+    
+    // Enter salva e sai
+    if (event.key === 'Enter') {
+        event.preventDefault();
+        event.target.blur();
+    }
+}
+
+/**
+ * ✅ FUNÇÃO: Salvar quantidade no cache
+ */
+function salvarQuantidadeNoCache(sheetRange, valor, sheetName) {
+    const cacheKey = `${CACHE_KEY}_${currentContador}`;
+    const cachedData = loadFromCache(cacheKey);
+    
+    cachedData[sheetRange] = valor;
+    saveToCache(cachedData, cacheKey);
+    
+    // Atualiza contagem de pendências
+    updatePendingCount();
+    
+    // Incrementa contador de edições para envio em lote
+    editCount++;
+    if (editCount >= BATCH_SIZE) {
+        processBatchUpdate();
+    }
+}
+
+
+
+
+
+		
 		
 		
     </script>
