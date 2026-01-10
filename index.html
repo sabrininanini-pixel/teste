@@ -720,20 +720,35 @@ body {
     vertical-align: middle !important;
 }
 
-/* Botões mais sutis */
-#contagem-table button {
+/* Apenas para botões com classe botao-quantidade */
+#contagem-table button.botao-quantidade {
     background: transparent !important;
     border: none !important;
     transition: all 0.2s ease !important;
 }
 
-#contagem-table button:hover {
+#contagem-table button.botao-quantidade:hover {
     background: rgba(0, 0, 0, 0.05) !important;
     transform: scale(1.1);
 }
 
-#contagem-table button:active {
+#contagem-table button.botao-quantidade:active {
     transform: scale(0.95);
+}
+
+/* Estilos específicos para botões grandes */
+.botao-grande {
+    width: 32px !important;
+    height: 32px !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+}
+
+/* Estilos específicos para botões pequenos */
+.botao-pequeno {
+    width: 20px !important;
+    height: 20px !important;
+    font-size: 12px !important;
 }
 
 /* Campo de número */
@@ -777,12 +792,6 @@ body {
 
 
 
-/* Botões maiores para ++ e -- */
-.botao-duplo {
-    width: 28px !important;
-    height: 28px !important;
-    font-size: 14px !important;
-}
 
 
 
@@ -1868,11 +1877,11 @@ function realizarMudancaParaConferencia(sheetName) {
         +
     </button>
 <button onclick="alterarQuantidade(this, 10, '${sheetRangeB}', '${currentContador}')" 
-            class="w-8 h-8 flex items-center justify-center text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded transition duration-150 text-sm"
-            title="Aumentar 10">
-        ++
-    </button>
-</div>
+        class="botao-quantidade botao-grande"
+        style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; color: #6b7280; border-radius: 4px; transition: all 0.15s; background: transparent; border: none; cursor: pointer; font-size: 14px; font-weight: 500;"
+        title="Aumentar 10">
+    ++
+</button>
                              </td>`;
         }
 
@@ -5913,10 +5922,11 @@ function atualizarCelulaQuantidade(rowElement, sheetRangeB, valor = "1") {
             +
         </button>
         <button onclick="alterarQuantidade(this, 10, '${sheetRangeB}', '${currentContador}')" 
-            class="w-8 h-8 flex items-center justify-center text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded transition duration-150 text-sm"
-            title="Aumentar 10">
-        ++
-    </button>
+        class="botao-quantidade botao-grande"
+        style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; color: #6b7280; border-radius: 4px; transition: all 0.15s; background: transparent; border: none; cursor: pointer; font-size: 14px; font-weight: 500;"
+        title="Aumentar 10">
+    ++
+</button>
     </div>
             `;
         } else {
