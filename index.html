@@ -1497,13 +1497,15 @@ body {
     const currentTab = document.querySelector('.tab-button.border-indigo-600')?.dataset.tab;
     
     if (currentTab === 'CONTAGEM LOJA' && sheetName === 'CONFERENCIA') {
-        console.log('🔄 Saindo da Contagem Loja para Conferência - Salvando dados...');
-        
-        const cacheKey = `${CACHE_KEY}_${currentContador}`;
-        const cachedData = loadFromCache(cacheKey);
-        const hasData = Object.keys(cachedData).filter(key => key.startsWith('A')).length > 0;
-        
-        if (hasData) {
+    console.log('🔄 Saindo da Contagem Loja para Conferência - Salvando dados...');
+    
+    const cacheKey = `${CACHE_KEY}_${currentContador}`;
+    const cachedData = loadFromCache(cacheKey);
+    
+    // ✅ VERIFICA QUALQUER DADO NO CACHE (não apenas coluna A)
+    const hasData = Object.keys(cachedData).length > 0;
+    
+    if (hasData) {
             // ✅ SALVA OS DADOS E SÓ DEPOIS MUDA PARA CONFERÊNCIA
             showNotification('Salvando dados da contagem antes de carregar conferência...', 'loading');
             
