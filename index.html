@@ -1830,25 +1830,31 @@ function realizarMudancaParaConferencia(sheetName) {
             // ✅ CÉLULA COM CÓDIGO - mostra botões e número
             const valorQuantidade = cellValueB || '1';
             quantidadeHtml = `<td class="${cellClassesB}" style="width: 140px;">
-                                <div class="flex items-center justify-center gap-3 w-full" style="height: 40px;">
-                                    <button onclick="alterarQuantidade(this, -1, '${sheetRangeB}', '${currentContador}')" 
-                                            class="w-6 h-6 flex items-center justify-center text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-full transition duration-200"
-                                            title="Diminuir">
-                                        −
-                                    </button>
-                                    <div class="quantidade-valor" contenteditable="true"
-     onblur="atualizarQuantidadeManual(this, '${sheetRangeB}', '${currentContador}')"
-     onkeydown="validarTeclaQuantidade(event)"
-     data-sheet-range="${sheetRangeB}"
-     data-original-value="${valorQuantidade}">
-     ${valorQuantidade}
+                                <div class="flex items-center justify-center gap-1 w-full" style="height: 40px;">
+    <button onclick="alterarQuantidade(this, -1, '${sheetRangeB}', '${currentContador}')" 
+            class="w-5 h-5 flex items-center justify-center text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded transition duration-150 text-sm"
+            title="Diminuir 1">
+        −
+    </button>
+    <div class="quantidade-valor" contenteditable="true"
+         onblur="atualizarQuantidadeManual(this, '${sheetRangeB}', '${currentContador}')"
+         onkeydown="validarTeclaQuantidade(event)"
+         style="width: 20px; text-align: center; margin: 0 2px;"
+         data-sheet-range="${sheetRangeB}"
+         data-original-value="${valorQuantidade}">
+         ${valorQuantidade}
+    </div>
+    <button onclick="alterarQuantidade(this, 1, '${sheetRangeB}', '${currentContador}')" 
+            class="w-5 h-5 flex items-center justify-center text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded transition duration-150 text-sm"
+            title="Aumentar 1">
+        +
+    </button>
+    <button onclick="alterarQuantidade(this, 10, '${sheetRangeB}', '${currentContador}')" 
+            class="w-5 h-5 flex items-center justify-center text-blue-500 hover:text-blue-700 hover:bg-blue-50 rounded transition duration-150 text-xs font-bold"
+            title="Aumentar 10">
+        ++
+    </button>
 </div>
-                                    <button onclick="alterarQuantidade(this, 1, '${sheetRangeB}', '${currentContador}')" 
-                                            class="w-6 h-6 flex items-center justify-center text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-full transition duration-200"
-                                            title="Aumentar">
-                                        +
-                                    </button>
-                                </div>
                              </td>`;
         }
 
@@ -5864,27 +5870,31 @@ function atualizarCelulaQuantidade(rowElement, sheetRangeB, valor = "1") {
         // Verifica se já tem botões (se não, cria)
         if (!cellB.querySelector('.quantidade-valor')) {
             cellB.innerHTML = `
-                <div class="flex items-center justify-center gap-3 w-full" style="height: 40px;">
-                    <button onclick="alterarQuantidade(this, -1, '${sheetRangeB}', '${currentContador}')" 
-                            class="w-8 h-8 flex items-center justify-center text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-full transition duration-200 text-xl font-light"
-                            style="min-width: 32px;"
-                            title="Diminuir">
-                        −
-                    </button>
-                    <div class="quantidade-valor" contenteditable="true"
-     onblur="atualizarQuantidadeManual(this, '${sheetRangeB}', '${currentContador}')"
-     onkeydown="validarTeclaQuantidade(event)"
-     data-sheet-range="${sheetRangeB}"
-     data-original-value="${valorQuantidade}">
-     ${valorQuantidade}
+                <div class="flex items-center justify-center gap-1 w-full" style="height: 40px;">
+    <button onclick="alterarQuantidade(this, -1, '${sheetRangeB}', '${currentContador}')" 
+            class="w-5 h-5 flex items-center justify-center text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded transition duration-150 text-sm"
+            title="Diminuir 1">
+        −
+    </button>
+    <div class="quantidade-valor" contenteditable="true"
+         onblur="atualizarQuantidadeManual(this, '${sheetRangeB}', '${currentContador}')"
+         onkeydown="validarTeclaQuantidade(event)"
+         style="width: 20px; text-align: center; margin: 0 2px;"
+         data-sheet-range="${sheetRangeB}"
+         data-original-value="${valorQuantidade}">
+         ${valorQuantidade}
+    </div>
+    <button onclick="alterarQuantidade(this, 1, '${sheetRangeB}', '${currentContador}')" 
+            class="w-5 h-5 flex items-center justify-center text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded transition duration-150 text-sm"
+            title="Aumentar 1">
+        +
+    </button>
+    <button onclick="alterarQuantidade(this, 10, '${sheetRangeB}', '${currentContador}')" 
+            class="w-5 h-5 flex items-center justify-center text-blue-500 hover:text-blue-700 hover:bg-blue-50 rounded transition duration-150 text-xs font-bold"
+            title="Aumentar 10">
+        ++
+    </button>
 </div>
-                    <button onclick="alterarQuantidade(this, 1, '${sheetRangeB}', '${currentContador}')" 
-                            class="w-8 h-8 flex items-center justify-center text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-full transition duration-200 text-xl font-light"
-                            style="min-width: 32px;"
-                            title="Aumentar">
-                        +
-                    </button>
-                </div>
             `;
         } else {
             // Apenas atualiza o valor
