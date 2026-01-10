@@ -1836,14 +1836,13 @@ function realizarMudancaParaConferencia(sheetName) {
                                         −
                                     </button>
                                     <div class="quantidade-valor" contenteditable="true"
-                                         onblur="atualizarQuantidadeManual(this, '${sheetRangeB}', '${currentContador}')"
-                                         onkeydown="validarTeclaQuantidade(event)"
-                                         class="min-w-12 text-center py-1 px-2 border border-transparent hover:border-gray-300 rounded transition duration-150 cursor-text text-base font-medium"
-                                         style="font-size: 16px; min-width: 50px;"
-                                         data-sheet-range="${sheetRangeB}"
-                                         data-original-value="${valorQuantidade}">
-                                         ${valorQuantidade}
-                                    </div>
+     onblur="atualizarQuantidadeManual(this, '${sheetRangeB}', '${currentContador}')"
+     onkeydown="validarTeclaQuantidade(event)"
+     style="width: 100%; text-align: center;"
+     data-sheet-range="${sheetRangeB}"
+     data-original-value="${valorQuantidade}">
+     ${valorQuantidade}
+</div>
                                     <button onclick="alterarQuantidade(this, 1, '${sheetRangeB}', '${currentContador}')" 
                                             class="w-8 h-8 flex items-center justify-center text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-full transition duration-200 text-xl font-light"
                                             style="min-width: 32px;"
@@ -5874,14 +5873,13 @@ function atualizarCelulaQuantidade(rowElement, sheetRangeB, valor = "1") {
                         −
                     </button>
                     <div class="quantidade-valor" contenteditable="true"
-                         onblur="atualizarQuantidadeManual(this, '${sheetRangeB}', '${currentContador}')"
-                         onkeydown="validarTeclaQuantidade(event)"
-                         class="min-w-12 text-center py-1 px-2 border border-transparent hover:border-gray-300 rounded transition duration-150 cursor-text text-base font-medium"
-                         style="font-size: 16px; min-width: 50px;"
-                         data-sheet-range="${sheetRangeB}"
-                         data-original-value="${valor}">
-                         ${valor}
-                    </div>
+     onblur="atualizarQuantidadeManual(this, '${sheetRangeB}', '${currentContador}')"
+     onkeydown="validarTeclaQuantidade(event)"
+     style="min-width: 30px; text-align: center; padding: 2px 4px;"
+     data-sheet-range="${sheetRangeB}"
+     data-original-value="${valor}">
+     ${valor}
+</div>
                     <button onclick="alterarQuantidade(this, 1, '${sheetRangeB}', '${currentContador}')" 
                             class="w-8 h-8 flex items-center justify-center text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-full transition duration-200 text-xl font-light"
                             style="min-width: 32px;"
