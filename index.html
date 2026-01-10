@@ -2375,10 +2375,11 @@ function renderNotasFiscaisInfo(notasFiscaisInfo) {
     }
 
     const cacheKey = `${CACHE_KEY}_${currentContador}`;
-    const cachedData = loadFromCache(cacheKey); // ✅ Aqui carrega os dados
+    const cachedData = loadFromCache(cacheKey);
     
     const rowIndex = sheetRange.slice(1);
     const sheetRangeB = `B${rowIndex}`;
+    const row = element.closest('tr');
     
     if (newValue === '') {
         delete cachedData[sheetRange];
@@ -2386,34 +2387,30 @@ function renderNotasFiscaisInfo(notasFiscaisInfo) {
         delete cachedData[sheetRangeC];
         delete cachedData[sheetRangeB];
         
-        const row = element.closest('tr');
-        const cellB = row.querySelector('.quantidade-cell');
-        if (cellB) {
-            const conteudoDiv = cellB.querySelector('.quantidade-conteudo');
-            if (conteudoDiv) {
-                conteudoDiv.textContent = '';
-            } else {
-                cellB.textContent = '';
-            }
-            cellB.dataset.originalValue = '';
+        // ✅ LIMPAR CÉLULA DE QUANTIDADE
+        limparCelulaQuantidade(row);
+        
+        const descCell = row.querySelector('.descricao-cell');
+        if (descCell) {
+            descCell.textContent = '';
         }
         
     } else {
         cachedData[sheetRange] = newValue;
         
+        // ✅ SE NÃO TEM QUANTIDADE, CRIA COM "1"
         if (!cachedData[sheetRangeB] || cachedData[sheetRangeB] === '') {
-    cachedData[sheetRangeB] = "1";
-    
-    const row = element.closest('tr');
-    const valorElement = row.querySelector('.quantidade-valor');
-    if (valorElement) {
-        valorElement.textContent = "1";
-        valorElement.dataset.originalValue = "1";
-    }
-}
+            cachedData[sheetRangeB] = "1";
+            
+            // ✅ ATUALIZAR VISUALMENTE COM BOTÕES
+            atualizarCelulaQuantidade(row, sheetRangeB, "1");
+        } else {
+            // ✅ SE JÁ TEM QUANTIDADE, APENAS ATUALIZA O VALOR
+            const valorExistente = cachedData[sheetRangeB];
+            atualizarCelulaQuantidade(row, sheetRangeB, valorExistente);
+        }
         
         const descricao = buscarDescricaoPorCodigo(newValue);
-        const row = element.closest('tr');
         const descCell = row.querySelector('.descricao-cell');
         
         if (descricao) {
@@ -2438,9 +2435,7 @@ function renderNotasFiscaisInfo(notasFiscaisInfo) {
         }
     }
     
-    // ✅ AQUI SALVA CORRETAMENTE
     saveToCache(cachedData, cacheKey);
-
     element.dataset.originalValue = newValue;
 
     if (newValue !== '') {
@@ -5681,13 +5676,12 @@ function handleQuantidadeCellEdit(element, sheetRange, sheetName) {
  * ✅ NOVA FUNÇÃO: Manipula teclas na célula de quantidade
  */
 function handleQuantidadeKeyPress(event, sheetRange, sheetName) {
-    if (event.keyCode === 13) { // Enter
+    if (event.keyCode === 13) {
         event.preventDefault();
         
         const element = event.target;
-        handleQuantidadeCellEdit(element, sheetRange, sheetName);
+        handleContagemCellEdit(element, sheetRange, sheetName);
         
-        // ✅ FOCA NA PRÓXIMA CÉLULA (CÓDIGO DE BARRAS)
         const currentRow = parseInt(sheetRange.slice(1));
         const nextRow = currentRow + 1;
         const nextRange = `A${nextRow}`;
@@ -5697,12 +5691,20 @@ function handleQuantidadeKeyPress(event, sheetRange, sheetName) {
             nextCell.focus();
             moveCursorToEnd(nextCell);
             nextCell.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            
+            // ✅ SE A PRÓXIMA CÉLULA TIVER CÓDIGO, ATUALIZA A QUANTIDADE VISUALMENTE
+            if (nextCell.textContent.trim() !== '') {
+                const nextRowElement = nextCell.closest('tr');
+                const nextRowIndex = parseInt(nextRange.slice(1));
+                const nextSheetRangeB = `B${nextRowIndex}`;
+                
+                const cacheKey = `${CACHE_KEY}_${currentContador}`;
+                const cachedData = loadFromCache(cacheKey);
+                
+                const quantidade = cachedData[nextSheetRangeB] || "1";
+                atualizarCelulaQuantidade(nextRowElement, nextSheetRangeB, quantidade);
+            }
         }
-    }
-    
-    // ✅ PERMITE APENAS NÚMEROS
-    if (!/[0-9]|Backspace|Delete|ArrowLeft|ArrowRight|Tab/.test(event.key)) {
-        event.preventDefault();
     }
 }
 
@@ -5794,8 +5796,88 @@ function salvarQuantidadeNoCache(sheetRange, valor, sheetName) {
 
 
 
+/**
+ * ✅ FUNÇÃO: Atualizar célula de quantidade quando código for inserido
+ */
+function atualizarCelulaQuantidade(rowElement, sheetRangeB, valor = "1") {
+    const cellB = rowElement.querySelector('.quantidade-cell');
+    
+    if (cellB) {
+        // Verifica se já tem botões (se não, cria)
+        if (!cellB.querySelector('.quantidade-valor')) {
+            cellB.innerHTML = `
+                <div style="display: flex; align-items: center; justify-content: center; gap: 4px; width: 100%;">
+                    <button onclick="alterarQuantidade(this, -1, '${sheetRangeB}', '${currentContador}')" 
+                            class="w-6 h-6 flex items-center justify-center bg-gray-200 rounded hover:bg-gray-300 text-sm font-bold">
+                        -
+                    </button>
+                    <div class="quantidade-valor" contenteditable="true"
+                         onblur="atualizarQuantidadeManual(this, '${sheetRangeB}', '${currentContador}')"
+                         onkeydown="validarTeclaQuantidade(event)"
+                         style="min-width: 30px; text-align: center; padding: 2px 4px; border: 1px solid transparent; border-radius: 4px; cursor: text;"
+                         data-sheet-range="${sheetRangeB}"
+                         data-original-value="${valor}">
+                         ${valor}
+                    </div>
+                    <button onclick="alterarQuantidade(this, 1, '${sheetRangeB}', '${currentContador}')" 
+                            class="w-6 h-6 flex items-center justify-center bg-gray-200 rounded hover:bg-gray-300 text-sm font-bold">
+                        +
+                    </button>
+                </div>
+            `;
+        } else {
+            // Apenas atualiza o valor
+            const valorElement = cellB.querySelector('.quantidade-valor');
+            if (valorElement) {
+                valorElement.textContent = valor;
+                valorElement.dataset.originalValue = valor;
+            }
+        }
+    }
+}
+
+/**
+ * ✅ FUNÇÃO: Limpar célula de quantidade quando código for removido
+ */
+function limparCelulaQuantidade(rowElement) {
+    const cellB = rowElement.querySelector('.quantidade-cell');
+    
+    if (cellB) {
+        cellB.innerHTML = `
+            <div style="display: flex; align-items: center; justify-content: center; gap: 4px; width: 100%; color: #9ca3af;">
+                -
+            </div>
+        `;
+    }
+}
 
 
+/**
+ * ✅ FUNÇÃO: Atualizar todas as células de quantidade baseado nos dados do cache
+ */
+function atualizarTodasCelulasQuantidade() {
+    const cacheKey = `${CACHE_KEY}_${currentContador}`;
+    const cachedData = loadFromCache(cacheKey);
+    
+    const rows = document.querySelectorAll('#contagem-table tbody tr');
+    
+    rows.forEach(row => {
+        const cellA = row.querySelector('td:first-child');
+        if (cellA) {
+            const codigo = cellA.textContent.trim();
+            const rowIndex = cellA.getAttribute('data-sheet-range')?.slice(1);
+            
+            if (codigo !== '' && rowIndex) {
+                const sheetRangeB = `B${rowIndex}`;
+                const quantidade = cachedData[sheetRangeB] || "1";
+                atualizarCelulaQuantidade(row, sheetRangeB, quantidade);
+            }
+        }
+    });
+}
+
+
+		
 		
 		
 		
