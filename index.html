@@ -1795,7 +1795,7 @@ function realizarMudancaParaConferencia(sheetName) {
                 <thead class="bg-gray-50 sticky top-0">
                     <tr>
                         <th class="text-left">Código de Barras</th>
-                        <th class="text-center" style="width: 140px;">Qtd</th> <!-- ✅ DOBRO DA LARGURA -->
+                        <th class="text-center" style="width: 140px;">Quantidade</th> <!-- ✅ DOBRO DA LARGURA -->
                         <th class="text-left">Descrição</th>
                     </tr>
                 </thead>
@@ -2082,7 +2082,7 @@ if (isConferencia && i === 5) { // Coluna "Corrigir"
         }
 
     } else if (sheetName === "CONTAGEM LOJA") {
-         headers = ["Código de Barras", "Qtd", "Descrição"]; // ✅ ADICIONADO "Qtd"
+         headers = ["Código de Barras", "Quantidade", "Descrição"]; // ✅ ADICIONADO "Qtd"
         targetElementId = 'dynamic-table-content-contagem';
         
         setTimeout(() => {
