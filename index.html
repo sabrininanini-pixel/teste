@@ -47,7 +47,6 @@
     background-color: #f8f9fa !important;
 }
 
-    /* ✅ HEADER CORRIGIDO - SEM SCROLL HORIZONTAL */
 header.print-hidden {
     background: 
         repeating-linear-gradient(0deg, rgba(255,255,255,0.1), rgba(255,255,255,0.1) 2px, transparent 2px, transparent 4px),
@@ -55,86 +54,27 @@ header.print-hidden {
     color: white;
     margin: 0;
     padding: 16px 0;
-    width: 100%; /* ✅ MUDOU DE 100vw PARA 100% */
+    width: 100%; 
     position: relative;
-    overflow: hidden; /* ✅ JÁ ESTAVA CORRETO */
+    overflow: hidden; 
     font-family: var(--font-main) !important;
-    /* ❌ REMOVE: margin-left: calc(-50vw + 50%) */
 }
 
-/* ✅ GARANTIR QUE O CONTEÚDO INTERNO NÃO CAUSE SCROLL */
 header.print-hidden .w-full {
     max-width: 100%;
     box-sizing: border-box;
 }
 
-/* ✅ CORREÇÃO EXTRA PARA O BODY */
 body {
-    overflow-x: hidden; /* ✅ IMPEDE SCROLL HORIZONTAL NO BODY */
+    overflow-x: hidden; 
     max-width: 100vw;
 }
-    /* 🔥 MANTENHA O RESTO DO SEU CSS ATUAL AQUI (modo scroll, impressão, etc) */
-    /* ---------------------------------------------------------------- */
-    /* --- Estilos de Edição/Conferência --- */
-    /* ---------------------------------------------------------------- */
-    
-    /* Estilos base para a coluna Diferença (5ª coluna visível) */
+
     #conferencia-content tr td:nth-child(5) { 
         font-weight: bold;
         text-align: center; 
     }
 
-    /* ---------------------------------------------------------------- */
-    /* --- LARGURAS FIXAS GERAIS (DEFAULT TRUNCADO) --- */
-    /* --- Esta regra é "desligada" pela classe .expand-mode-cell --- */
-    /* ---------------------------------------------------------------- */
-    
-    /* Coluna 1 (Código de Barras - 210px) da Conferência */
-    
-	/*  
-	#conferencia-table th:nth-child(1),
-    #conferencia-table td:nth-child(1) {
-         width: 210px; 
-         min-width: 210px;
-         max-width: 210px;
-         overflow: hidden; 
-         text-overflow: ellipsis;
-         white-space: nowrap;
-    }
-    */
-	   
-    /* Colunas numéricas/estreitas (70px) da Conferência 
-    #conferencia-table th:nth-child(3), 
-    #conferencia-table td:nth-child(3),
-    #conferencia-table th:nth-child(4), 
-    #conferencia-table td:nth-child(4),
-    #conferencia-table th:nth-child(5), 
-    #conferencia-table td:nth-child(5),
-    #conferencia-table th:nth-child(6), 
-    #conferencia-table td:nth-child(6) {
-         width: 70px; 
-         min-width: 70px;
-         max-width: 70px;
-         overflow: hidden; 
-         text-overflow: ellipsis;
-         white-space: nowrap;
-    }
-    
-    /* Colunas numéricas/estreitas (70px) da Nota Fiscal 
-    #notafiscal-table th:nth-child(2),
-    #notafiscal-table td:nth-child(2),
-    #notafiscal-table th:nth-child(4),
-    #notafiscal-table td:nth-child(4) {
-         width: 70px; 
-         min-width: 70px;
-         max-width: 70px;
-         overflow: hidden; 
-         text-overflow: ellipsis;
-         white-space: nowrap;
-         text-align: center; 
-    }
-*/
-    /* Coluna Código de Barras (300px) da Contagem Loja */
     #contagem-table th:nth-child(1),
     #contagem-table td:nth-child(1) {
         width: 300px !important;
@@ -146,7 +86,6 @@ body {
         text-align: left;
     }
 
-    /* Coluna Descrição da Contagem Loja - CORRIGIDA: REMOVIDO PADDING E ALINHAMENTO À ESQUERDA */
     #contagem-table th:nth-child(2),
     #contagem-table td:nth-child(2) {
         padding-left: 0 !important;
@@ -154,18 +93,13 @@ body {
         text-align: left !important;
     }
 
-    /* Centraliza os valores numéricos da CONFERENCIA */
     #conferencia-table td:nth-child(3), 
     #conferencia-table td:nth-child(4),
     #conferencia-table td:nth-child(5) {
          text-align: center; 
     }
 
-    /* ---------------------------------------------------------------- */
-    /* --- ESTILOS DE MODO (TOGGLE POR JS) --- */
-    /* ---------------------------------------------------------------- */
 
-    /* Estilo base para MODO EXPANDIDO */
     .expand-mode-cell {
         max-width: none !important;
         min-width: 0 !important;
@@ -173,8 +107,6 @@ body {
         white-space: normal !important;
     }
 
-
-    /* Classe para MODO SCROLL (COLUNAS DE DESCRIÇÃO E TEXTO LONGO - 150px) */
     .scroll-mode-cell {
         max-width: 150px !important; 
         min-width: 150px !important;
@@ -183,7 +115,6 @@ body {
         text-overflow: clip !important;
     }
     
-    /* Classe para MODO SCROLL (COLUNAS NUMÉRICAS OU ESTREITAS - 70px) */
     .scroll-mode-cell-numeric {
         width: 70px !important; 
         min-width: 70px !important;
@@ -194,7 +125,6 @@ body {
         text-align: left !important;
     }
     
-    /* Classe para Código de Barras (210px) */
     .scroll-mode-cell-code {
         width: 210px !important; 
         min-width: 210px !important;
@@ -205,13 +135,11 @@ body {
         text-align: left !important;
     }
 
-    /* Classes usadas pelo JavaScript para aplicar as cores */
     .bg-fee2e2 { background-color: #fee2e2; }
     .text-b91c1c { color: #b91c1c; }
     .bg-green-100 { background-color: #d1fae5; }
     .text-green-700 { color: #047857; }
 
-    /* Estilo para linhas com código mas sem descrição na Contagem Loja */
     .bg-red-50 {
         background-color: #fecaca !important;
     }
@@ -220,18 +148,13 @@ body {
         background-color: #fecaca !important;
     }
 
-    /* Estilo para células editáveis */
     [contenteditable="true"]:focus {
         outline: none;
         box-shadow: 0 0 0 2px #c7d2fe; 
     }
     
-    /* ---------------------------------------------------------------- */
-    /* --- Estilos de Impressão (A4) --- */
-    /* ---------------------------------------------------------------- */
    @media print {
-    /* 🚨 CORREÇÃO CRÍTICA 1: Define o tamanho da página A4 e remove margens padrão
-       Isto ajuda o WebKit (iOS) a renderizar corretamente. */
+
     @page {
         size: A4;
         margin: 0; 
@@ -245,7 +168,6 @@ body {
         margin: 0 !important;
         padding: 10px !important; 
         
-        /* 🚨 CORREÇÃO CRÍTICA 2: Força a largura exata de uma folha A4 (210mm) */
         width: 210mm !important; 
         max-width: 210mm !important;
 
@@ -266,13 +188,10 @@ body {
         background: white !important;
     }
     
-    /* Ocultar elementos não essenciais */
     header, nav, #paste-modal, #notifications-container, .print-hidden,
     .flex.border-b, .flex.flex-wrap, button, .tab-button {
         display: none !important;
     }
-
-    /* ✅ CORREÇÃO DA TABELA - FORÇAR CABER NA PÁGINA */
     .mock-table {
         width: 100% !important;
         max-width: 100% !important;
@@ -286,11 +205,11 @@ body {
         border: 1px solid #ccc !important;
         font-size: 8pt !important;
         line-height: 1.1 !important;
-        /* Força quebra de texto agressiva em todas as células */
+        
         word-break: break-word !important; 
         word-wrap: break-word !important;
         overflow-wrap: break-word !important;
-        white-space: normal !important; /* Importante para não manter linha única */
+        white-space: normal !important; 
     }
     
     .mock-table th {
@@ -299,7 +218,6 @@ body {
         color: black !important;
     }
     
-    /* ✅ REMOVER TODOS OS MODOS DE LARGURA FIXA NA IMPRESSÃO */
     .scroll-mode-cell, .scroll-mode-cell-numeric, .expand-mode-cell, 
     .scroll-mode-cell-code, .truncate-mode-cell {
         max-width: none !important;
@@ -309,17 +227,18 @@ body {
         white-space: normal !important;
         text-overflow: clip !important;
     }
-    
-    /* ✅ REFORÇAR QUEBRA DE TEXTO LONGO */
+	   
     .mock-table td {
         word-break: break-word;
         hyphens: auto;
     }
-    
-    /* ✅ AJUSTAR LARGURAS ESPECÍFICAS DAS COLUNAS PARA IMPRESSÃO */
+
+	   
+	   
+	   
     #conferencia-table th:nth-child(1),
     #conferencia-table td:nth-child(1) {
-        width: 15% !important; /* Código de Barras */
+        width: 15% !important; 
     }
     
     #conferencia-table th:nth-child(2),
@@ -337,7 +256,6 @@ body {
         text-align: center !important;
     }
     
-    /* ✅ MANTER CORES DAS DIVERGÊNCIAS MESMO NA IMPRESSÃO */
     .bg-fee2e2, .text-b91c1c, .bg-red-100 {
         background-color: #fee2e2 !important;
         color: #b91c1c !important;
@@ -357,14 +275,10 @@ body {
         -webkit-print-color-adjust: exact;
         print-color-adjust: exact;
     }
-    
-    /* ✅ EVITAR QUEBRA DE LINHA NO MEIO DA LINHA */
     .mock-table tr {
         page-break-inside: avoid;
         page-break-after: auto;
     }
-    
-    /* ✅ CABEÇALHO FIXO NA IMPRESSÃO (se possível) */
     .mock-table thead {
         display: table-header-group;
     }
@@ -372,8 +286,6 @@ body {
     .mock-table th {
         position: static !important;
     }
-    
-    /* ✅ INFORMAÇÕES DAS NOTAS FISCAIS NA IMPRESSÃO */
     .mb-4 {
         margin-bottom: 8px !important;
     }
@@ -386,7 +298,6 @@ body {
         border: 1px solid #d1d5db !important;
     }
 
-	/* ✅ OCULTAR COLUNA AJUSTAR NA IMPRESSÃO */
     #conferencia-table th:nth-child(6),
     #conferencia-table td:nth-child(6) {
         display: none !important;
@@ -394,9 +305,6 @@ body {
 }
 }
     
-    /* ---------------------------------------------------------------- */
-    /* --- Ajuste de Notificação para Mobile (Compactação) --- */
-    /* ---------------------------------------------------------------- */
     @media (max-width: 640px) {
         #notifications-container > div {
             padding: 0.5rem !important; 
@@ -414,7 +322,6 @@ body {
         }
     }
 
-    /* RESPONSIVO */
     @media (max-width: 768px) {
         header .flex {
             flex-direction: column;
@@ -426,14 +333,11 @@ body {
             gap: 5px;
         }
         
-        /* ✅ HEADER MOBILE COM NOVO ESTILO */
         header.print-hidden {
             padding: 10px 0 !important;
         }
     }
 
-
-/* 🔥 CORREÇÃO DEFINITIVA PARA HEADER MOBILE/DESKTOP */
 .header-mobile {
     display: none;
 }
@@ -455,11 +359,8 @@ body {
 }
 
 
-	   /* CONTIDAS AS ABAS DO CONTADOR*/
-	   
 	   @media (max-width: 767px) {
 
-    /* Menu de contadores - contido e com scroll interno */
     .flex.border-b.border-gray-200.mb-4.print-hidden {
         width: 100%;
         max-width: 100%;
@@ -484,27 +385,26 @@ body {
     gap: 0 !important;
 
 		   .bg-red-100 {
-    background-color: #fee2e2 !important; /* Vermelho bem suave */
+    background-color: #fee2e2 !important; 
 }
 
 .bg-red-100:hover {
-    background-color: #fecaca !important; /* Vermelho um pouco mais forte no hover */
+    background-color: #fecaca !important; 
 }
 
 		   .igualar-btn {
     background: transparent !important;
-    color: #4B5563 !important; /* Cor cinza (texto normal) */
+    color: #4B5563 !important; 
     border: 1px solid transparent !important;
     transition: all 0.2s ease-in-out;
 }
 
 .igualar-btn:hover {
-    background: #F3F4F6 !important; /* Cinza muito claro no hover */
-    border-color: #D1D5DB !important; /* Borda cinza no hover */
-    color: #374151 !important; /* Texto um pouco mais escuro no hover */
+    background: #F3F4F6 !important; 
+    border-color: #D1D5DB !important; 
+    color: #374151 !important; 
 }
 
-/* Estilos para o sistema de Danos/Defeito - MELHORADO */
 .menu-danos-defeito {
     animation: fadeIn 0.2s ease-in-out;
 }
@@ -513,7 +413,7 @@ body {
     from { opacity: 0; transform: translateY(-10px); }
     to { opacity: 1; transform: translateY(0); }
 }
-/* ✅ VERSÃO SIMPLES E EFETIVA */
+
 .descricao-danos {
     outline: none !important;
     border: none !important;
@@ -539,7 +439,6 @@ body {
     min-height: 20px;
     font-size: 16px;
     font-weight: 400;
-    /* ✅ SEM BACKGROUND, APENAS TEXTO */
     background: none !important;
     border: none !important;
     opacity: 1 !important;
@@ -550,9 +449,6 @@ body {
     transform: scale(1.1);
 }
 
-/* ========== BOTÃO MODO DESKTOP - EMERGÊNCIA ========== */
-
-/* 🔧 BOTÃO BASE - SEMPRE VISÍVEL (REMOVER DISPLAY NONE) */
 .btn-desktop-mode {
     display: flex !important;
     align-items: center !important;
@@ -573,14 +469,12 @@ body {
     z-index: 10 !important;
 }
 
-/* 🎨 MODO DESKTOP ATIVO - MUDAR COR DO BOTÃO */
 .modo-desktop-ativo .btn-desktop-mode {
     background: #10b981 !important;
     color: white !important;
     border-color: #059669 !important;
 }
 
-/* 🔧 MODO DESKTOP PARA CONTEÚDO */
 .modo-desktop-ativo body {
     min-width: 1024px !important;
     overflow-x: auto !important;
@@ -593,14 +487,13 @@ body {
     width: 100% !important;
 }
 
-/* 🖥️ DESKTOP REAL: ESCONDER BOTÃO (apenas em telas muito grandes) */
 @media (min-width: 1200px) and (pointer: fine) {
     .btn-desktop-mode {
         display: none !important;
     }
 }
 
-/* ✅ ESTILOS PARA BOTÃO IGUALADO */
+
 .flex.items-center.justify-center.gap-2 {
     display: flex;
     align-items: center;
@@ -628,7 +521,6 @@ body {
     font-weight: bold;
 }
 
-/* ✅ ESTILO PARA O X VERMELHO */
 .text-sm.font-bold {
     font-size: 0.875rem;
     font-weight: bold;
@@ -638,19 +530,8 @@ body {
 
 
 
-
-
-
-
-
-
-
-
 		   
 
-
-
-/* ✅ ESTILOS PARA A CÉLULA DE QUANTIDADE */
 .quantidade-cell {
     text-align: center !important;
     min-width: 60px !important;
@@ -658,14 +539,12 @@ body {
     width: 70px !important;
 }
 
-/* Garantir que o conteúdo editável também fique centralizado */
 .quantidade-cell[contenteditable="true"]:focus {
     text-align: center !important; 
     outline: none;
     box-shadow: 0 0 0 2px #c7d2fe;
 }
 
-/* Para modo de impressão */
 @media print {
     .quantidade-cell {
         width: 40px !important;
@@ -673,10 +552,6 @@ body {
     }
 }
 
-
-
-
-/* ✅ ESTILOS ESPECÍFICOS PARA COLUNA DE QUANTIDADE */
 #contagem-table th:nth-child(2) {
     width: 140px !important;
     min-width: 140px !important;
@@ -691,7 +566,6 @@ body {
     vertical-align: middle !important;
 }
 
-/* Apenas para botões com classe botao-quantidade */
 #contagem-table button.botao-quantidade {
     background: transparent !important;
     border: none !important;
@@ -707,7 +581,6 @@ body {
     transform: scale(0.95);
 }
 
-/* Estilos específicos para botões grandes */
 .botao-grande {
     width: 32px !important;
     height: 32px !important;
@@ -715,14 +588,12 @@ body {
     font-weight: 500 !important;
 }
 
-/* Estilos específicos para botões pequenos */
 .botao-pequeno {
     width: 20px !important;
     height: 20px !important;
     font-size: 12px !important;
 }
 
-/* Campo de número */
 .quantidade-valor {
     font-family: 'Poppins', sans-serif !important;
     font-size: 12px !important;
@@ -741,9 +612,6 @@ body {
     background-color: #f8fafc !important;
     box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.1) !important;
 }
-
-
-
 
 
 
